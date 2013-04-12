@@ -21,3 +21,12 @@ What does it do?
 How is it constructed?
 *command line arguments (bydate, byalpha, since, number of stories per feed, title (regex), description on/off, newest)
 *feeds (file containing list of feed URLs). These will become an array of syndfeed objects.
+
+
+
+
+Some useful javadoc things:
+    Feed entry (i.e. post) class:
+http://www.jarvana.com/jarvana/view/net/java/dev/rome/rome/1.0.0/rome-1.0.0-javadoc.jar!/index.html
+    Feed class:
+http://www.jarvana.com/jarvana/view/net/java/dev/rome/rome/1.0.0/rome-1.0.0-javadoc.jar!/index.html
