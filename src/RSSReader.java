@@ -6,12 +6,13 @@ import com.sun.syndication.feed.SyndFeedImp;
 
 
 /**
-* 
+*       
 */
 
 public class RSSReader {
 
     private ArrayList<SyndEntryImpl> feeds;
+    private ArgParser argParser;
 
     public RSSReader(ArrayList<SyndEntryImpl> allFeeds) {
         feeds = allFeeds;
@@ -44,8 +45,9 @@ public class RSSReader {
     * gets all posts from a particular feed and will accept a synd feed impl as a parameter
     */
     public ArrayList<SyndEntryImpl> getPostsFromFeed(SyndFeedImpl curFeed) {
-        allPosts = null;
-        return allPosts;
+        //allPosts = null;
+        //return allPosts;
+        return curFeed.get_posts();
 
     }
 
@@ -112,17 +114,52 @@ public class RSSReader {
         return posts;
     }
 
-  /**
-   * Instantiates a new RSSReader, calls it with the arguments from
+    /**
+    * parse arguments n stuff
+    */
+    public void parseArguments(String[] args) {
+        // This is the object we'll be using
+        argParser = new ArgParser();
+
+        // Retrieve and process the command line arguments, setting the appropriate instance variables in test
+        CLManager options = new CLManager(argParser);
+        options.parse(args);
+
+        // Collect any remaining command line arguments that were not parsed.
+        String[] remaining = options.getRemainingArguments();
+
+        // Get the filename out of the remaining options
+        if (remaining.length > 0) {
+            // Note: we make an assumption here that the first "extraneous" argument is the feed file.
+            argParser.setFilename(remaining[0]);
+        } else {
+            // the program should exit if the feed file is not specified on the command line.
+            System.err.println("Error: no input filename specified.");
+            System.exit(-1);
+        }
+
+        // DEBUG: were the instance variables set correctly?
+        System.out.println("Instance variables:");
+        System.out.println("Sort by alpha: " + argParser.isByAlpha());
+        System.out.println("Date: " + argParser.getDate());
+        System.out.println("Number of feeds to list: " + argParser.getNumber());
+    }
+
+
+   /** Instantiates a new RSSReader, calls it with the arguments from
    * the command line.
    *
    *
    * See: http://grepcode.com/file/repo1.maven.org/maven2/org.rometools/rome-fetcher/1.2/org/rometools/fetcher/samples/FeedReader.java
    */
     public static void main(String[] args) {
-    // Parse the file. Return some array, FeedUrls.
-    ArrayList<String> FeedUrls = null;
-    RSSReader reader = RSSReader(
+        parseArguments(args);
+        // Parse the file. Return some array, FeedUrls.
+        ArrayList<String> feedUrls = null;
+        RSSReader reader = RSSReader(feedUrls);
+        // or like:
+        // reader.set_sort('name');
+        reader.run('args');
     }
 
 }
