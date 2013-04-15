@@ -87,12 +87,7 @@ public class RSSReader {
             public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
                 String a = o1.getTitle();
                 String b = o2.getTitle();
-                if (a.lt(b)) 
-                    return -1;
-                else if (a.lteq(b))
-                    return 0;
-                else
-                    return 1;
+                return a.compareTo(b);
             }
         });
         return posts;
@@ -107,12 +102,7 @@ public class RSSReader {
             public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
                 Date a = o1.getPublishedDate();
                 Date b = o2.getPublishedDate();
-                if (a.lt(b)) 
-                    return -1;
-                else if (a.lteq(b))
-                    return 0;
-                else
-                    return 1;
+                return a.compareTo(b);
             }
         });
         return posts;
