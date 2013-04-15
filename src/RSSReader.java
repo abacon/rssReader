@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import com.sun.syndication.feed.SyndFeedImp;
 
@@ -60,6 +62,13 @@ public class RSSReader {
 	*/
 	public ArrayList<SyndEntryImpl> sortPosts(String sortMode) {
 		// TODO: do we want the functionality of sorting a subset of posts?
+		ArrayList<SyndEntryImpl> posts;
+		if (sortMode.equals("alpha"))
+			posts = sortPostsByAlpha();
+		else if (sortMode.equals("date"))
+			posts = sortPostsByDate();
+		else
+			posts = null;
 		return posts;
 	}
 
@@ -67,6 +76,19 @@ public class RSSReader {
 	* don't need a param because it's sorting alphabetically
 	*/
 	public ArrayList<SyndEntryImpl> sortPostsByAlpha() {
+		ArrayList<SyndEntryImpl> posts = getAllPosts();
+		Collections.sort(posts, new Comparator<SyndEntryImpl> {
+   			public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
+      			Date a = o1.getTitle();
+      			Date b = o2.getTitle();
+      			if (a.lt(b)) 
+        			return -1;
+      			else if (a.lteq(b))
+         			return 0;
+      			else
+         			return 1;
+   			}
+		});
 		return posts;
 	}
 
@@ -74,6 +96,19 @@ public class RSSReader {
 	* sort chronologically
 	*/
 	public ArrayList<SyndEntryImpl> sortPostsByDate() {
+		ArrayList<SyndEntryImpl> posts = getAllPosts();
+		Collections.sort(posts, new Comparator<SyndEntryImpl> {
+   			public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
+      			Date a = o1.getPublishedDate();
+      			Date b = o2.getPublishedDate();
+      			if (a.lt(b)) 
+        			return -1;
+      			else if (a.lteq(b))
+         			return 0;
+      			else
+         			return 1;
+   			}
+		});
 		return posts;
 	}
 
