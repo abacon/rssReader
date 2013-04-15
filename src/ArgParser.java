@@ -1,7 +1,8 @@
-import be.ugent.twijug.jclops.*;
 import be.ugent.twijug.jclops.annotations.*;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -154,7 +155,12 @@ public class ArgParser {
 	 */
 	@Option(description="<N> the number of titles to display")
 	public void setSince(String since) {
-		this.since = DateFormat.parse(since);
+		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+		try {
+			this.since = df.parse(since);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 
 		/**
