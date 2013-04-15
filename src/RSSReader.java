@@ -1,3 +1,8 @@
+import java.util.ArrayList;
+import java.util.Date;
+import com.sun.syndication.feed.SyndFeedImp;
+
+
 /**
 * 
 */
@@ -10,12 +15,22 @@ public class RSSReader {
 		feeds = allFeeds;
 	}
 
+
+  /**
+   * Gets all the posts, sorts them if necessary, and displays the result.
+   */
+  public void run() {
+    // For every feed, fetch posts into some array (local or instance var?)
+    // Then sort these posts
+    // Then display them according to the flags we've parsed.
+  }
+
 	/**
-	* does formatting and output and should respond to the following two command line arguments:
+	* does formatting and output and should respond to the following config options:
 	* --number (number of posts)
 	* --since (since a date in format yyyy-mm-dd, which is a date object)
 	* --title
-	* --description 
+	* --description
 	* --newest (optional)
 	*/
 	public void display() {
@@ -56,14 +71,23 @@ public class RSSReader {
 	}
 
 	/**
-	* sort date-ically
+	* sort chronologically
 	*/
 	public ArrayList<SyndEntryImpl> sortPostsByDate() {
 		return posts;
 	}
 
+  /**
+   * Instantiates a new RSSReader, calls it with the arguments from
+   * the command line.
+   *
+   *
+   * See: http://grepcode.com/file/repo1.maven.org/maven2/org.rometools/rome-fetcher/1.2/org/rometools/fetcher/samples/FeedReader.java
+   */
 	public static void main(String[] args) {
-
+    // Parse the file. Return some array, FeedUrls.
+    ArrayList<String> FeedUrls = null;
+    RSSReader reader = RSSReader(
 	}
 
 }
