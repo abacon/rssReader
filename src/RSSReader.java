@@ -4,7 +4,7 @@
 
 public class RSSReader {
 
-	private ArrayList<SyndFeedImpl> feeds;
+	private ArrayList<SyndEntryImpl> feeds;
 
 	public RSSReader(ArrayList<SyndEntryImpl> allFeeds) {
 		feeds = allFeeds;
