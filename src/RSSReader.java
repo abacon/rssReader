@@ -135,7 +135,7 @@ public class RSSReader {
         // DEBUG: were the instance variables set correctly?
         System.out.println("Instance variables:");
         System.out.println("Sort by alpha: " + argParser.isByAlpha());
-        System.out.println("Date: " + argParser.getDate());
+        System.out.println("Date: " + argParser.getSince());
         System.out.println("Number of feeds to list: " + argParser.getNumber());
     }
 
@@ -153,7 +153,7 @@ public class RSSReader {
         RSSReader reader = RSSReader(feedUrls);
         // or like:
         // reader.set_sort('name');
-        reader.run('args');
+        // reader.run('args');
     }
 
 }
