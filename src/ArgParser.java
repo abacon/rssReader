@@ -1,6 +1,10 @@
 import be.ugent.twijug.jclops.*;
 import be.ugent.twijug.jclops.annotations.*;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.regex.Pattern;
+
 /**
  * A simple class demonstrating the use of the Options class in the plume library,
  * for processing of command line arguments.
@@ -33,7 +37,7 @@ public class ArgParser {
 
 	private Date since;
 
-	private Regex title;
+	private Pattern title;
 
 	/** The file containing the list of feeds */
 	private String filename;
@@ -46,10 +50,10 @@ public class ArgParser {
 		byDate = false;
 		byAlpha = false;
 		newest = false;
-		description false;
+		description = false;
 		number = 2;
 		since = new Date();
-		title = new Regex("");
+		title = null;
 		filename = "";
 	}
 
@@ -140,7 +144,7 @@ public class ArgParser {
 	 * Returns the number of stories per feed to display.
 	 * @return the number of stories to display
 	 */
-	public int getSince() {
+	public Date getSince() {
 		return since;
 	}
 
@@ -157,7 +161,7 @@ public class ArgParser {
 	 * Returns the number of stories per feed to display.
 	 * @return the number of stories to display
 	 */
-	public int getTitle() {
+	public Pattern getTitle() {
 		return title;
 	}
 
@@ -167,7 +171,7 @@ public class ArgParser {
 	 */
 	@Option(description="<N> the number of titles to display")
 	public void setTitle(String title) {
-		this.title = new Regex(title);
+		this.title = Pattern.compile(title);
 	}
 
 	/**
@@ -176,6 +180,10 @@ public class ArgParser {
 	 */
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+	
+	public String getFilename() {
+		return filename;
 	}
 
 }
