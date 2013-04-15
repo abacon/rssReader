@@ -7,11 +7,15 @@ import be.ugent.twijug.jclops.CLManager;
 
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
+import com.sun.tools.javac.util.List;
 
 
 /**
-*       
-*/
+ * A class for parsing and outputting RSS subscriptions
+ * @author Andrew Bacon, Holly French, Veronica Lynn
+ * CS 204, Spring 2013
+ * date: 16 April 2013
+ */
 
 public class RSSReader {
 
@@ -47,11 +51,13 @@ public class RSSReader {
     /**
     * TODO: double check the object return type
     * gets all posts from a particular feed and will accept a synd feed impl as a parameter
+    * @param SyndFeedImpl curFeed the current feed from which we want to get posts
+    * @return an array list of SyndEntry objects, which are the posts
     */
-    public ArrayList<SyndEntryImpl> getPostsFromFeed(SyndFeedImpl curFeed) {
+    public List<SyndEntryImpl> getPostsFromFeed(SyndFeedImpl curFeed) {
         //allPosts = null;
         //return allPosts;
-        return curFeed.get_posts();
+    	return (List<SyndEntryImpl>) curFeed.getEntries();
 
     }
 
