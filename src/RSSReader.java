@@ -37,7 +37,7 @@ public class RSSReader {
   }
 
     /**
-    * does formatting and output and should respond to the following config options:
+    * Does formatting and output and should respond to the following config options:
     * --number (number of posts)
     * --since (since a date in format yyyy-mm-dd, which is a date object)
     * --title
@@ -50,7 +50,7 @@ public class RSSReader {
 
     /**
     * TODO: double check the object return type
-    * gets all posts from a particular feed and will accept a synd feed impl as a parameter
+    * Gets all posts from a particular feed and will accept a synd feed impl as a parameter
     * @param SyndFeedImpl curFeed the current feed from which we want to get posts
     * @return an array list of SyndEntry objects, which are the posts
     */
@@ -62,7 +62,8 @@ public class RSSReader {
     }
 
     /**
-    * gets all posts from a particular feed and will accept a synd feed impl as a parameter
+    * Gets all posts from all subscribed feeds.
+    * @return ArrayList<SyndEntryImpl> allPosts an array list of all posts
     */
     public ArrayList<SyndEntryImpl> getAllPosts() {
         // worst case we will call this in the constructor to populate in inst var if needed.
@@ -76,7 +77,9 @@ public class RSSReader {
     }
 
     /**
-    * sort posts
+    * Sort posts by a given sort mode (the current options are alphabetically and by date
+    * @param String sortMode the mode we are using to sort, either alphabetically or by date (can be expanded later)
+    * @return ArrayList<SyndEntryImpl> posts An array of posts sorted according to the mode parameter
     */
     public ArrayList<SyndEntryImpl> sortPosts(String sortMode) {
         // TODO: do we want the functionality of sorting a subset of posts?
@@ -91,7 +94,8 @@ public class RSSReader {
     }
 
     /**
-    * don't need a param because it's sorting alphabetically
+    * This is called by the sortPosts method.  It sorts posts when the mode is alpha; that is, the user wants posts sorted alphabetically
+    * @return ArrayList<SyndEntryImpl> posts The posts sorted alphabetically
     */
     public ArrayList<SyndEntryImpl> sortPostsByAlpha() {
         ArrayList<SyndEntryImpl> posts = getAllPosts();
@@ -106,7 +110,8 @@ public class RSSReader {
     }
 
     /**
-    * sort chronologically
+    * This is called by the sortPosts method.  It sorts posts when the mode is date; that is, the user wants posts sorted chronologically
+    * @return ArrayList<SyndEntryImpl> posts The posts sorted by date
     */
     public ArrayList<SyndEntryImpl> sortPostsByDate() {
         ArrayList<SyndEntryImpl> posts = getAllPosts();
@@ -121,7 +126,8 @@ public class RSSReader {
     }
 
     /**
-    * parse arguments n stuff
+    * Parses the command line arguments provided by the user.  
+    * @param String[] args The arguments provided by the suer
     */
     public void parseArguments(String[] args) {
         // This is the object we'll be using
