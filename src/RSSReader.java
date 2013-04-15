@@ -2,7 +2,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import com.sun.syndication.feed.SyndFeedImp;
+import com.sun.syndication.feed.synd.SyndEntryImpl;
+import com.sun.syndication.feed.synd.SyndFeedImpl;
 
 
 /**
@@ -56,7 +57,7 @@ public class RSSReader {
     */
     public ArrayList<SyndEntryImpl> getAllPosts() {
         // worst case we will call this in the constructor to populate in inst var if needed.
-
+    	return null;
     }
 
     /**
