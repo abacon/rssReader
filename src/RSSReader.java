@@ -19,7 +19,7 @@ import com.sun.tools.javac.util.List;
 
 public class RSSReader {
 
-    private ArrayList<SyndEntryImpl> feeds;
+    private ArrayList<SyndFeedImpl> feeds;
     private ArgParser argParser;
 
     public RSSReader(ArrayList<SyndEntryImpl> allFeeds) {
@@ -66,7 +66,13 @@ public class RSSReader {
     */
     public ArrayList<SyndEntryImpl> getAllPosts() {
         // worst case we will call this in the constructor to populate in inst var if needed.
-    	return null;
+    	ArrayList<SyndEntryImpl> allPosts = new ArrayList<SyndEntryImpl>();
+    	for (SyndFeedImpl feed : feeds) {
+    		List<SyndEntryImpl> curPosts = getPostsFromFeed(feed);
+    		for (SyndEntryImpl post : curPosts) 
+    			allPosts.add(post);  		
+    	}
+    	return allPosts;
     }
 
     /**
