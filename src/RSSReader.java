@@ -83,7 +83,7 @@ public class RSSReader {
     */
     public ArrayList<SyndEntryImpl> sortPostsByAlpha() {
         ArrayList<SyndEntryImpl> posts = getAllPosts();
-        Collections.sort(posts, new Comparator<SyndEntryImpl> {
+        Collections.sort(posts, new Comparator<SyndEntryImpl>() {
             public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
                 String a = o1.getTitle();
                 String b = o2.getTitle();
@@ -103,7 +103,7 @@ public class RSSReader {
     */
     public ArrayList<SyndEntryImpl> sortPostsByDate() {
         ArrayList<SyndEntryImpl> posts = getAllPosts();
-        Collections.sort(posts, new Comparator<SyndEntryImpl> {
+        Collections.sort(posts, new Comparator<SyndEntryImpl>() {
             public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
                 Date a = o1.getPublishedDate();
                 Date b = o2.getPublishedDate();
