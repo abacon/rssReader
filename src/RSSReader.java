@@ -22,7 +22,7 @@ public class RSSReader {
     private ArrayList<SyndFeedImpl> feeds;
     private ArgParser argParser;
 
-    public RSSReader(ArrayList<SyndEntryImpl> allFeeds) {
+    public RSSReader(ArrayList<SyndFeedImpl> allFeeds) {
         feeds = allFeeds;
     }
 
