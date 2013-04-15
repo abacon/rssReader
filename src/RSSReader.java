@@ -79,8 +79,8 @@ public class RSSReader {
         ArrayList<SyndEntryImpl> posts = getAllPosts();
         Collections.sort(posts, new Comparator<SyndEntryImpl> {
             public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
-                Date a = o1.getTitle();
-                Date b = o2.getTitle();
+                String a = o1.getTitle();
+                String b = o2.getTitle();
                 if (a.lt(b)) 
                     return -1;
                 else if (a.lteq(b))
