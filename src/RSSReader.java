@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import be.ugent.twijug.jclops.CLManager;
 
@@ -21,6 +22,8 @@ public class RSSReader {
 
     private ArrayList<SyndFeedImpl> feeds;
     private ArgParser argParser;
+    private static final String ALPHA = "alpha";
+    private static final String DATE = "date";
 
     public RSSReader(ArrayList<SyndFeedImpl> allFeeds) {
         feeds = allFeeds;
@@ -43,9 +46,59 @@ public class RSSReader {
     * --title
     * --description
     * --newest (optional)
+    * 
+    * FEED NAME
+(1) story title [tab] publication date [tab] link
+[description]
+(2) title [tab] publication date [tab] link [tab]
+[description]
+
+ANOTHER FEED NAME
+(1) story title [tab] publication date [tab] link
+[description]
+(2) title [tab] publication date [tab] link [tab]
+[description]
     */
     public void display() {
-        System.out.println();
+        int number = argParser.getNumber();
+        Date since = argParser.getSince();
+        Pattern title = argParser.getTitle();
+        boolean isByDate = argParser.isByDate();
+        boolean isByAlpha = argParser.isByAlpha();
+        boolean isNewest = argParser.isNewest();
+        boolean isDescription = argParser.isDescription();
+        
+        
+		if (isByDate) {
+	        ArrayList<SyndEntryImpl> posts;
+	        posts = sortPostsByDate();
+		}
+
+		else {
+			displayByFeeds(number, since, isByAlpha, isDescription);
+		}
+        
+    }
+    
+    public void displayByFeeds(int number, Date since, boolean isByAlpha, boolean isDescription) {
+    	ArrayList<SyndFeedImpl> curFeeds;
+    	if (isByAlpha)
+    		curFeeds = sortPostsByAlpha();
+    	else
+    		curFeeds = feeds;
+    	
+		for (SyndFeedImpl feed : curFeeds) {
+			for (int i = 0; i < number; i++){
+				if (feed.getPublishedDate().compareTo(since) >= 0) {
+					String feedOutput = feed.getTitle() + "\t" + feed.getPublishedDate() + "\t" + feed.getLink();
+					System.out.println(feedOutput);
+					if (isDescription) {
+						String description = feed.getDescription();
+						System.out.println(description);
+					}
+				}
+			}
+		}
     }
 
     /**
@@ -83,30 +136,27 @@ public class RSSReader {
     */
     public ArrayList<SyndEntryImpl> sortPosts(String sortMode) {
         // TODO: do we want the functionality of sorting a subset of posts?
-        ArrayList<SyndEntryImpl> posts;
         if (sortMode.equals("alpha"))
-            posts = sortPostsByAlpha();
+            sortPostsByAlpha();
         else if (sortMode.equals("date"))
-            posts = sortPostsByDate();
-        else
-            posts = null;
-        return posts;
+            return sortPostsByDate();
+        return null;
     }
 
     /**
-    * This is called by the sortPosts method.  It sorts posts when the mode is alpha; that is, the user wants posts sorted alphabetically
+    * This is called by the sortPosts method.  It sorts posts when the mode is alpha; that is, the user wants feeds sorted alphabetically
     * @return ArrayList<SyndEntryImpl> posts The posts sorted alphabetically
     */
-    public ArrayList<SyndEntryImpl> sortPostsByAlpha() {
-        ArrayList<SyndEntryImpl> posts = getAllPosts();
-        Collections.sort(posts, new Comparator<SyndEntryImpl>() {
-            public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
+    public ArrayList<SyndFeedImpl> sortPostsByAlpha() {
+    	ArrayList<SyndFeedImpl> sortedFeeds = new ArrayList<SyndFeedImpl>(feeds);
+        Collections.sort(sortedFeeds, new Comparator<SyndFeedImpl>() {
+            public int compare(SyndFeedImpl o1, SyndFeedImpl o2) {
                 String a = o1.getTitle();
                 String b = o2.getTitle();
                 return a.compareTo(b);
             }
         });
-        return posts;
+        return sortedFeeds;
     }
 
     /**
