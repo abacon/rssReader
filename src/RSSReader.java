@@ -68,12 +68,13 @@ ANOTHER FEED NAME
         boolean isNewest = argParser.isNewest();
         boolean isDescription = argParser.isDescription();
         
-        
-		if (isByDate) {
+        if (title != null) {
+        	// match the regexp and figure out what we want to do here.  do we take into account the number variable here?
+        }
+        else if (isByDate) {
 	        ArrayList<SyndEntryImpl> posts;
 	        posts = sortPostsByDate();
 		}
-
 		else {
 			displayByFeeds(number, since, isByAlpha, isDescription);
 		}
