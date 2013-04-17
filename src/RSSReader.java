@@ -2,9 +2,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Iterator;
 
 import be.ugent.twijug.jclops.CLManager;
 
@@ -46,8 +46,6 @@ public class RSSReader {
     * --title
     * --description
     * --newest (optional)
-    * 
-    * FEED NAME
     */
     public void display() {
         int number = argParser.getNumber();
@@ -70,6 +68,13 @@ public class RSSReader {
         
     }
     
+    /**
+     * displayByFeeds is called by display, which is the default display setting if no date or title arguments are provided.
+     * @param number Number of articles to be displayed
+     * @param since Earliest date from which an article can be displayed
+     * @param isByAlpha Determines whether the display should be alphabetically by title
+     * @param isDescription Determines whether to print the articles description too
+     */
     public void displayByFeeds(int number, Date since, boolean isByAlpha, boolean isDescription) {
     	ArrayList<SyndFeedImpl> curFeeds;
     	if (isByAlpha)
@@ -92,6 +97,12 @@ public class RSSReader {
 		}
     }
 
+    /**
+     * displayByFeeds is called by display, which displays articles by date rather than by news source.
+     * @param number Number of articles to be displayed
+     * @param since Earliest date from which an article can be displayed
+     * @param isDescription Determines whether a description is included with the article
+     */
     public void displayByDate(int number, Date since, boolean isDescription) {
         ArrayList<SyndEntryImpl> posts;
         posts = sortPostsByDate();
@@ -109,6 +120,14 @@ public class RSSReader {
         }
     }
     
+    /**
+     * displayByTitle displayes articles that match a given regular expression for a title
+     * @param number Number of posts
+     * @param since Earliest date from which an article can be displayed
+     * @param isByAlpha Determines whether we sort the titles alphabetically
+     * @param isDescription Determines whether we show the article description
+     * @param title The pattern we are using to match article titles
+     */
     public void displayByTitle(int number, Date since, boolean isByAlpha, boolean isDescription, Pattern title) {
     	ArrayList<SyndFeedImpl> curFeeds;
     	if (isByAlpha)
@@ -136,7 +155,7 @@ public class RSSReader {
     /**
     * TODO: double check the object return type
     * Gets all posts from a particular feed and will accept a synd feed impl as a parameter
-    * @param SyndFeedImpl curFeed the current feed from which we want to get posts
+    * @param curFeed the current feed from which we want to get posts
     * @return an array list of SyndEntry objects, which are the posts
     */
     public List<SyndEntryImpl> getPostsFromFeed(SyndFeedImpl curFeed) {
@@ -146,7 +165,7 @@ public class RSSReader {
 
     /**
     * Gets all posts from all subscribed feeds.
-    * @return ArrayList<SyndEntryImpl> allPosts an array list of all posts
+    * @return allPosts an array list of all posts
     */
     public ArrayList<SyndEntryImpl> getAllPosts() {
         // worst case we will call this in the constructor to populate in inst var if needed.
@@ -161,7 +180,7 @@ public class RSSReader {
 
     /**
     * This is called by the sortPosts method.  It sorts posts when the mode is alpha; that is, the user wants feeds sorted alphabetically
-    * @return ArrayList<SyndEntryImpl> posts The posts sorted alphabetically
+    * @return posts The posts sorted alphabetically
     */
     public ArrayList<SyndFeedImpl> sortPostsByAlpha() {
     	ArrayList<SyndFeedImpl> sortedFeeds = new ArrayList<SyndFeedImpl>(feeds);
@@ -177,7 +196,7 @@ public class RSSReader {
 
     /**
     * This is called by the sortPosts method.  It sorts posts when the mode is date; that is, the user wants posts sorted chronologically
-    * @return ArrayList<SyndEntryImpl> posts The posts sorted by date
+    * @return posts The posts sorted by date
     */
     public ArrayList<SyndEntryImpl> sortPostsByDate() {
         ArrayList<SyndEntryImpl> posts = getAllPosts();
@@ -193,7 +212,7 @@ public class RSSReader {
 
     /**
     * Parses the command line arguments provided by the user.  
-    * @param String[] args The arguments provided by the suer
+    * @param args The arguments provided by the suer
     */
     public void parseArguments(String[] args) {
         // This is the object we'll be using
