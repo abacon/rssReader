@@ -118,7 +118,12 @@ public class RSSReader {
 					entrydate = entry.getPublishedDate().toString();
 				else 
 					entrydate = "";
-						
+					
+				/* we only print if the date is correct: 
+				 * if we want the newest, we only print the articles that happened after it was last run
+				 * if we are imposing the since condition, we only print articles after the specified date and time.
+				 * we also include error handling since apparently not all articles have a date.
+				 */
 				if ((isNewest && entry.getPublishedDate().after(this.getLastRun()))
 						|| !isNewest && entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) {
 					System.out
@@ -157,6 +162,11 @@ public class RSSReader {
 		int articleNum = 1;
 		for (int i = 0; i < number; i++) {
 			SyndEntryImpl post = posts.get(i);
+			/* we only print if the date is correct: 
+			 * if we want the newest, we only print the articles that happened after it was last run
+			 * if we are imposing the since condition, we only print articles after the specified date and time.
+			 * we also include error handling since apparently not all articles have a date.
+			 */
 			if ((isNewest && post.getPublishedDate().after(this.getLastRun()))
 					|| !isNewest && post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) {
 				String feedOutput = "(" + articleNum + ")" + post.getTitle()
@@ -197,6 +207,11 @@ public class RSSReader {
 			int articleNum = 1;
 			for (int i = 0; i < number; i++) {
 				SyndEntryImpl post = posts.get(i);
+				/* we only print if the date is correct: 
+				 * if we want the newest, we only print the articles that happened after it was last run
+				 * if we are imposing the since condition, we only print articles after the specified date and time.
+				 * we also include error handling since apparently not all articles have a date.
+				 */
 				if ((isNewest && post.getPublishedDate().after(this.getLastRun()))
 						|| !isNewest && post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) {
 					Matcher matcher = title.matcher(post.getTitle());
@@ -226,6 +241,11 @@ public class RSSReader {
 			for (SyndFeedImpl feed : curFeeds) {
 				for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 					SyndEntryImpl entry = (SyndEntryImpl) i.next();
+					/* we only print if the date is correct: 
+					 * if we want the newest, we only print the articles that happened after it was last run
+					 * if we are imposing the since condition, we only print articles after the specified date and time.
+					 * we also include error handling since apparently not all articles have a date.
+					 */
 					if ((isNewest && entry.getPublishedDate().after(this.getLastRun()))
 							|| !isNewest && entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) {
 						Matcher matcher = title.matcher(entry.getTitle());
