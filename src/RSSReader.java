@@ -303,11 +303,26 @@ public class RSSReader {
 		Collections.sort(posts, new Comparator<SyndEntryImpl>() {
 			@Override
 			public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
-				Date a = o1.getPublishedDate();
-				Date b = o2.getPublishedDate();
+				Date a;
+				Date b;
+				try {
+					a = o1.getPublishedDate();
+				} catch (Exception e) {
+					a = new Date(Long.MIN_VALUE);
+				}
+				try {
+					b = o2.getPublishedDate();
+				} catch (Exception e) {
+					b = new Date(Long.MIN_VALUE);
+				}
+				if (a == null)
+					a = new Date(Long.MIN_VALUE);
+				if (b == null)
+					b = new Date(Long.MIN_VALUE);
 				return a.compareTo(b);
 			}
 		});
+		Collections.reverse(posts);
 		return posts;
 	}
 
