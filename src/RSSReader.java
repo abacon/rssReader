@@ -37,7 +37,6 @@ public class RSSReader {
 	}
 	
 	public ArgParser getArgParser() {
-		// TODO Auto-generated method stub
 		return this.argParser;
 	}
 	
@@ -130,6 +129,8 @@ public class RSSReader {
 						System.out.println(entry.getDescription());
 					}
 					articleNum++;
+					if (articleNum <= number)
+						break;
 				}
 
 			}
