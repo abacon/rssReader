@@ -3,13 +3,20 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
+import java.net.URL;
 
 import be.ugent.twijug.jclops.CLManager;
 
 import com.sun.syndication.feed.synd.SyndEntryImpl;
+import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
 
 /**
  * A class for parsing and outputting RSS subscriptions
@@ -24,10 +31,6 @@ public class RSSReader {
 	private ArgParser argParser;
 	private Date lastRun = new Date(Long.MIN_VALUE);
 
-	public RSSReader(ArrayList<SyndFeedImpl> allFeeds) {
-		feeds = allFeeds;
-	}
-
 	/**
 	 * Gets all the posts, sorts them if necessary, and displays the result.
 	 */
@@ -37,6 +40,32 @@ public class RSSReader {
 		// Then display them according to the flags we've parsed.
 	}
 
+	public void setArgParser(ArgParser argParser) {
+		this.argParser = argParser;
+	}
+	
+	public ArgParser getArgParser() {
+		// TODO Auto-generated method stub
+		return this.argParser;
+	}
+	
+	
+	public void setFeeds(ArrayList<SyndFeedImpl> feeds) {
+		this.feeds = feeds;
+	}
+	
+	public ArrayList<SyndFeedImpl> getFeeds() {
+		return this.feeds;
+	}
+	
+	public Date getLastRun() {
+		return lastRun;
+	}
+
+	public void setLastRun(Date lastRun) {
+		this.lastRun = lastRun;
+	}
+
 	/**
 	 * Does formatting and output and should respond to the following config
 	 * options: --number (number of posts) --since (since a date in format
@@ -44,6 +73,7 @@ public class RSSReader {
 	 * (optional)
 	 */
 	public void display() {
+		argParser = this.getArgParser();
 		int number = argParser.getNumber();
 		Date since = argParser.getSince();
 		Pattern title = argParser.getTitle();
@@ -60,8 +90,8 @@ public class RSSReader {
 		} else {
 			displayByFeeds(number, since, isByAlpha, isDescription, isNewest);
 		}
-
-		this.lastRun = new Date();
+		
+		this.setLastRun(new Date());
 
 	}
 
@@ -85,7 +115,7 @@ public class RSSReader {
 		if (isByAlpha)
 			curFeeds = sortPostsByAlpha();
 		else
-			curFeeds = feeds;
+			curFeeds = this.getFeeds();
 
 		for (SyndFeedImpl feed : curFeeds) {
 			System.out.println(feed.getTitle().toUpperCase());
@@ -163,7 +193,7 @@ public class RSSReader {
 		if (isByAlpha)
 			curFeeds = sortPostsByAlpha();
 		else
-			curFeeds = feeds;
+			curFeeds = this.getFeeds();
 
 		int articleNum = 1;
 		for (SyndFeedImpl feed : curFeeds) {
@@ -284,13 +314,32 @@ public class RSSReader {
 			System.err.println("Error: no input filename specified.");
 			System.exit(-1);
 		}
-
-		// DEBUG: were the instance variables set correctly?
-		System.out.println("Instance variables:");
-		System.out.println("Sort by alpha: " + argParser.isByAlpha());
-		System.out.println("Date: " + argParser.getSince());
-		System.out.println("Number of feeds to list: " + argParser.getNumber());
+		this.setArgParser(argParser);
 	}
+
+    public ArrayList<SyndFeedImpl> getSyndFeedsFromFile(String filename) {
+       FileParser fp = new FileParser();
+       ArrayList<String> urls = fp.getLines(argParser.getFilename());
+       ArrayList<SyndFeedImpl> feeds = new ArrayList<SyndFeedImpl>();
+       for (String url : urls) {
+               feeds.add(makeSyndFeedImplFromUrl(url));
+       }
+       return feeds;
+    }
+    
+    public SyndFeedImpl makeSyndFeedImplFromUrl(String url) {
+    	try {
+	    	URL feedSource = new URL(url);
+	        SyndFeedInput input = new SyndFeedInput();
+	        SyndFeedImpl feed = (SyndFeedImpl) input.build(new XmlReader(feedSource));
+	        return feed;
+    	}
+    	catch(Exception ex) {
+			System.out.println("ERROR: "+ex.getMessage());
+			ex.printStackTrace();
+			return null;
+    	}
+    }
 
 	/**
 	 * Instantiates a new RSSReader, calls it with the arguments from the
@@ -301,13 +350,16 @@ public class RSSReader {
 	 * fetcher/1.2/org/rometools/fetcher/samples/FeedReader.java
 	 */
 	public static void main(String[] args) {
-		parseArguments(args);
-		// Parse the file. Return some array, FeedUrls.
-		ArrayList<String> feedUrls = null;
-		RSSReader reader = RSSReader(feedUrls);
-		// or like:
-		// reader.set_sort('name');
-		// reader.run('args');
+		RSSReader reader = new RSSReader();
+		String urlFile = null;
+		
+		reader.parseArguments(args);
+		urlFile = reader.getArgParser().getFilename();
+		ArrayList<SyndFeedImpl> feeds = reader.getSyndFeedsFromFile(urlFile);
+		reader.setFeeds(feeds);
+
+		reader.run();
 	}
+
 
 }
