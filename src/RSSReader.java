@@ -114,11 +114,17 @@ public class RSSReader {
 			int articleNum = 1;
 			for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 				SyndEntryImpl entry = (SyndEntryImpl) i.next();
+				String entrydate;
+				if (entry.getPublishedDate() != null)
+					entrydate = entry.getPublishedDate().toString();
+				else 
+					entrydate = "";
+						
 				if ((isNewest && entry.getPublishedDate().after(this.getLastRun()))
 						|| !isNewest) {
 					System.out
 							.println("(" + articleNum + ")" + entry.getTitle()
-									+ "\t" + entry.getPublishedDate() + "\t"
+									+ "\t" + entrydate + "\t"
 									+ entry.getLink());
 					if (isDescription) {
 						System.out.println(entry.getDescription());
