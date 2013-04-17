@@ -1,3 +1,10 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,14 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import be.ugent.twijug.jclops.CLManager;
 import be.ugent.twijug.jclops.CLParseException;
@@ -40,7 +39,7 @@ public class RSSReader {
 	private ArgParser argParser;
 	private Date lastRun;
 	private static final String LAST_RUN_FILE = "data/lastRun.txt";
-	
+
 	public RSSReader() {
 		this.lastRun = getLastRun();
 	}
@@ -48,22 +47,23 @@ public class RSSReader {
 	public void setArgParser(ArgParser argParser) {
 		this.argParser = argParser;
 	}
-	
+
 	public ArgParser getArgParser() {
 		return this.argParser;
 	}
-	
-	
+
 	public void setFeeds(ArrayList<SyndFeedImpl> feeds) {
 		this.feeds = feeds;
 	}
-	
+
 	public ArrayList<SyndFeedImpl> getFeeds() {
 		return this.feeds;
 	}
-	
+
 	/**
-	 * This parses a date file into a date object so we know when we last ran the parser.
+	 * This parses a date file into a date object so we know when we last ran
+	 * the parser.
+	 * 
 	 * @return date at which the feed reader was last run
 	 */
 	public Date getLastRun() {
@@ -117,14 +117,14 @@ public class RSSReader {
 		boolean isDescription = argParser.isDescription();
 
 		if (title != null) {
-			displayByTitle(number, since, isByAlpha, isByDate, isDescription, title,
-					isNewest);
+			displayByTitle(number, since, isByAlpha, isByDate, isDescription,
+					title, isNewest);
 		} else if (isByDate) {
 			displayByDate(number, since, isDescription, isNewest);
 		} else {
 			displayByFeeds(number, since, isByAlpha, isDescription, isNewest);
 		}
-		
+
 		writeTimeToFile();
 
 	}
@@ -159,19 +159,24 @@ public class RSSReader {
 				String entrydate;
 				if (entry.getPublishedDate() != null)
 					entrydate = entry.getPublishedDate().toString();
-				else 
+				else
 					entrydate = "Date unknown";
-									
-				/* we only print if the date is correct: 
-				 * if we want the newest, we only print the articles that happened after it was last run
-				 * if we are imposing the since condition, we only print articles after the specified date and time.
-				 * we also include error handling since apparently not all articles have a date.
+
+				/*
+				 * we only print if the date is correct: if we want the newest,
+				 * we only print the articles that happened after it was last
+				 * run if we are imposing the since condition, we only print
+				 * articles after the specified date and time. we also include
+				 * error handling since apparently not all articles have a date.
 				 */
-				if (!isNewest && (entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) || (!entrydate.equals("Date unknown") && isNewest && entry.getPublishedDate().after(lastRun))) {
-					System.out
-							.println("(" + articleNum + ")" + entry.getTitle()
-									+ "\t" + entrydate + "\t"
-									+ entry.getLink());
+				if (!isNewest
+						&& (entry.getPublishedDate() != null ? entry
+								.getPublishedDate().after(since) : true)
+						|| (!entrydate.equals("Date unknown") && isNewest && entry
+								.getPublishedDate().after(lastRun))) {
+					System.out.println("(" + articleNum + ")"
+							+ entry.getTitle() + "\t" + entrydate + "\t"
+							+ entry.getLink());
 					if (isDescription && entry.getDescription() != null) {
 						System.out.println(entry.getDescription());
 					}
@@ -204,16 +209,21 @@ public class RSSReader {
 		int articleNum = 1;
 		for (int i = 0; i < number; i++) {
 			SyndEntryImpl post = posts.get(i);
-			/* we only print if the date is correct: 
-			 * if we want the newest, we only print the articles that happened after it was last run
-			 * if we are imposing the since condition, we only print articles after the specified date and time.
-			 * we also include error handling since apparently not all articles have a date.
+			/*
+			 * we only print if the date is correct: if we want the newest, we
+			 * only print the articles that happened after it was last run if we
+			 * are imposing the since condition, we only print articles after
+			 * the specified date and time. we also include error handling since
+			 * apparently not all articles have a date.
 			 */
-			if (!isNewest && (post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) || (isNewest && post.getPublishedDate().after(lastRun))) {
-				String date = post.getPublishedDate() != null ? post.getPublishedDate().toString() : "Date unknown";
+			if (!isNewest
+					&& (post.getPublishedDate() != null ? post
+							.getPublishedDate().after(since) : true)
+					|| (isNewest && post.getPublishedDate().after(lastRun))) {
+				String date = post.getPublishedDate() != null ? post
+						.getPublishedDate().toString() : "Date unknown";
 				String feedOutput = "(" + articleNum + ")" + post.getTitle()
-						+ "\t" + date + "\t"
-						+ post.getLink();
+						+ "\t" + date + "\t" + post.getLink();
 				System.out.println(feedOutput);
 				if (isDescription && post.getDescription() != null) {
 					System.out.println(post.getDescription());
@@ -238,9 +248,10 @@ public class RSSReader {
 	 * @param title
 	 *            The pattern we are using to match article titles
 	 */
-	public void displayByTitle(int number, Date since, boolean isByAlpha, boolean isByDate,
-			boolean isDescription, Pattern title, boolean isNewest) {
-		
+	public void displayByTitle(int number, Date since, boolean isByAlpha,
+			boolean isByDate, boolean isDescription, Pattern title,
+			boolean isNewest) {
+
 		// if we want to display by title and by date
 		if (isByDate) {
 			ArrayList<SyndEntryImpl> posts;
@@ -249,17 +260,23 @@ public class RSSReader {
 			int articleNum = 1;
 			for (int i = 0; i < number; i++) {
 				SyndEntryImpl post = posts.get(i);
-				/* we only print if the date is correct: 
-				 * if we want the newest, we only print the articles that happened after it was last run
-				 * if we are imposing the since condition, we only print articles after the specified date and time.
-				 * we also include error handling since apparently not all articles have a date.
+				/*
+				 * we only print if the date is correct: if we want the newest,
+				 * we only print the articles that happened after it was last
+				 * run if we are imposing the since condition, we only print
+				 * articles after the specified date and time. we also include
+				 * error handling since apparently not all articles have a date.
 				 */
-				if (!isNewest && (post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) || (isNewest && post.getPublishedDate().after(lastRun))) {
+				if (!isNewest
+						&& (post.getPublishedDate() != null ? post
+								.getPublishedDate().after(since) : true)
+						|| (isNewest && post.getPublishedDate().after(lastRun))) {
 					Matcher matcher = title.matcher(post.getTitle());
 					if (matcher.find()) {
-						String date = post.getPublishedDate() != null ? post.getPublishedDate().toString() : "Date unknown";
-						String feedOutput = "(" + articleNum + ")" + post.getTitle()
-								+ "\t" + date + "\t"
+						String date = post.getPublishedDate() != null ? post
+								.getPublishedDate().toString() : "Date unknown";
+						String feedOutput = "(" + articleNum + ")"
+								+ post.getTitle() + "\t" + date + "\t"
 								+ post.getLink();
 						System.out.println(feedOutput);
 						if (isDescription && post.getDescription() != null) {
@@ -268,9 +285,9 @@ public class RSSReader {
 						articleNum++;
 					}
 				}
-			}	
+			}
 		}
-		
+
 		// if we do not care about date
 		else {
 			ArrayList<SyndFeedImpl> curFeeds;
@@ -283,18 +300,26 @@ public class RSSReader {
 			for (SyndFeedImpl feed : curFeeds) {
 				for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 					SyndEntryImpl entry = (SyndEntryImpl) i.next();
-					/* we only print if the date is correct: 
-					 * if we want the newest, we only print the articles that happened after it was last run
-					 * if we are imposing the since condition, we only print articles after the specified date and time.
-					 * we also include error handling since apparently not all articles have a date.
+					/*
+					 * we only print if the date is correct: if we want the
+					 * newest, we only print the articles that happened after it
+					 * was last run if we are imposing the since condition, we
+					 * only print articles after the specified date and time. we
+					 * also include error handling since apparently not all
+					 * articles have a date.
 					 */
-					if (!isNewest && (entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) || (isNewest && entry.getPublishedDate().after(lastRun))) {
+					if (!isNewest
+							&& (entry.getPublishedDate() != null ? entry
+									.getPublishedDate().after(since) : true)
+							|| (isNewest && entry.getPublishedDate().after(
+									lastRun))) {
 						Matcher matcher = title.matcher(entry.getTitle());
 						if (matcher.find()) {
-							String date = entry.getPublishedDate() != null ? entry.getPublishedDate().toString() : "Date unknown";
+							String date = entry.getPublishedDate() != null ? entry
+									.getPublishedDate().toString()
+									: "Date unknown";
 							System.out.println("(" + articleNum + ")"
-									+ entry.getTitle() + "\t"
-									+ date + "\t"
+									+ entry.getTitle() + "\t" + date + "\t"
 									+ entry.getLink());
 							if (isDescription && entry.getDescription() != null) {
 								System.out.println(entry.getDescription());
@@ -307,13 +332,11 @@ public class RSSReader {
 				}
 			}
 		}
-	
+
 	}
 
 	/**
-	 * TODO: double check the object return type Gets all posts from a
-	 * particular feed and will accept a synd feed impl as a parameter
-	 * 
+	 * Gets the posts from the feed.
 	 * @param curFeed
 	 *            the current feed from which we want to get posts
 	 * @return an array list of SyndEntry objects, which are the posts
@@ -407,12 +430,12 @@ public class RSSReader {
 		CLManager options = new CLManager(argParser);
 		options.parse(args);
 
-	    try {
-	        options.parse(args);
-	     } catch (CLParseException ex) {
-	         System.out.println (ex);
-	     }
-		
+		try {
+			options.parse(args);
+		} catch (CLParseException ex) {
+			System.out.println(ex);
+		}
+
 		// Collect any remaining command line arguments that were not parsed.
 		String[] remaining = options.getRemainingArguments();
 
@@ -430,56 +453,63 @@ public class RSSReader {
 		this.setArgParser(argParser);
 	}
 
-    public ArrayList<SyndFeedImpl> getSyndFeedsFromFile(String filename) {
-       FileParser fp = new FileParser();
-       ArrayList<String> urls = fp.getLines(argParser.getFilename());
-       ArrayList<SyndFeedImpl> feeds = new ArrayList<SyndFeedImpl>();
-       for (String url : urls) {
-    	   try {
-               feeds.add(makeSyndFeedImplFromUrl(url));
+	public ArrayList<SyndFeedImpl> getSyndFeedsFromFile(String filename) {
+		FileParser fp = new FileParser();
+		ArrayList<String> urls = fp.getLines(filename);
+		ArrayList<SyndFeedImpl> feeds = new ArrayList<SyndFeedImpl>();
+		for (String url : urls) {
+			try {
+				feeds.add(makeSyndFeedImplFromUrl(url));
 			} catch (MalformedURLException e) {
-				System.out.println("Warning: " + url + " is not a valid URL.\n");
+				System.out
+						.println("Warning: " + url + " is not a valid URL.\n");
 			} catch (IOException e) {
-				System.out.println("Warning: URL " + url + " could not be read.\n");
+				System.out.println("Warning: URL " + url
+						+ " could not be read.\n");
 			} catch (FeedException e) {
-				System.out.println("Warning: Feed at URL " + url + " could not be parsed.\n");
+				System.out.println("Warning: Feed at URL " + url
+						+ " could not be parsed.\n");
 			}
-       }
-       return feeds;
-    }
-    
-    public SyndFeedImpl makeSyndFeedImplFromUrl(String url) throws IllegalArgumentException, FeedException, IOException {
-	    	URL feedSource = new URL(url);
-	        SyndFeedInput input = new SyndFeedInput();
-	        SyndFeedImpl feed = (SyndFeedImpl) input.build(new XmlReader(feedSource));
-	        return feed;
-    }
-    
-    /**
-     * This writes the current time out to the date file so we can keep track of when this was last run.
-     */
-    public void writeTimeToFile(){
+		}
+		return feeds;
+	}
+
+	public SyndFeedImpl makeSyndFeedImplFromUrl(String url)
+			throws IllegalArgumentException, FeedException, IOException {
+		URL feedSource = new URL(url);
+		SyndFeedInput input = new SyndFeedInput();
+		SyndFeedImpl feed = (SyndFeedImpl) input
+				.build(new XmlReader(feedSource));
+		return feed;
+	}
+
+	/**
+	 * This writes the current time out to the date file so we can keep track of
+	 * when this was last run.
+	 */
+	public void writeTimeToFile() {
 		FileOutputStream fop = null;
 		File file;
 		Date date = new Date();
-		String content = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+		String content = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+				.format(date);
 		try {
- 
+
 			file = new File(LAST_RUN_FILE);
 			fop = new FileOutputStream(file);
- 
+
 			// if file does not exist, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}
- 
+
 			// get the content in bytes
 			byte[] contentInBytes = content.getBytes();
- 
+
 			fop.write(contentInBytes);
 			fop.flush();
 			fop.close();
-  
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -490,9 +520,9 @@ public class RSSReader {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} 	
-    }
-    
+		}
+	}
+
 	/**
 	 * Instantiates a new RSSReader, calls it with the arguments from the
 	 * command line.
@@ -504,7 +534,7 @@ public class RSSReader {
 	public static void main(String[] args) {
 		RSSReader reader = new RSSReader();
 		String urlFile = null;
-		
+
 		reader.parseArguments(args);
 		urlFile = reader.getArgParser().getFilename();
 		ArrayList<SyndFeedImpl> feeds = reader.getSyndFeedsFromFile(urlFile);
@@ -512,6 +542,5 @@ public class RSSReader {
 
 		reader.display();
 	}
-
 
 }
