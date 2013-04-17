@@ -31,15 +31,6 @@ public class RSSReader {
 	private ArgParser argParser;
 	private Date lastRun = new Date(Long.MIN_VALUE);
 
-	/**
-	 * Gets all the posts, sorts them if necessary, and displays the result.
-	 */
-	public void run() {
-		// For every feed, fetch posts into some array (local or instance var?)
-		// Then sort these posts
-		// Then display them according to the flags we've parsed.
-	}
-
 	public void setArgParser(ArgParser argParser) {
 		this.argParser = argParser;
 	}
@@ -385,7 +376,7 @@ public class RSSReader {
 		ArrayList<SyndFeedImpl> feeds = reader.getSyndFeedsFromFile(urlFile);
 		reader.setFeeds(feeds);
 
-		reader.run();
+		reader.display();
 	}
 
 
