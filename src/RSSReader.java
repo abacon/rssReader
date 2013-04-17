@@ -16,7 +16,6 @@ import be.ugent.twijug.jclops.CLManager;
 import be.ugent.twijug.jclops.CLParseException;
 
 import com.sun.syndication.feed.synd.SyndEntryImpl;
-import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;

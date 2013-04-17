@@ -3,23 +3,22 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
-
-
 /**
- * Parses a file into an ArrayList<String>.
- * Overkill?
+ * Parses a file into an ArrayList<String> whose elements are the lines of the file.
  * 
- * @author Andrew Bacon
+ * @author Andrew Bacon, Holly French, Veronica Lynn
+ * CS 204, Spring 2013
  */
 public class FileParser {
 	
 	
 	/**
-	 * @return
+	 * Parses the lines of a file into an ArrayList
+	 * 
+	 * @param filename The file to read from
+	 * @return an ArrayList containing the lines of the file as strings
 	 */
 	public ArrayList<String> getLines(String filename) {
-		// TODO Auto-generated method stub
 		Scanner infile = null;
 
 		try {
@@ -32,9 +31,8 @@ public class FileParser {
 		ArrayList<String> values = new ArrayList<String>();
 		String currentLine;
 
-		/* As long as there are still lines in the file, read in the next line
-		 * and add it to the list.
-		 */
+		// As long as there are still lines in the file, read in the next line
+		// and add it to the list.
 		while (infile.hasNextLine()) {
 			currentLine = infile.nextLine();
 			values.add(currentLine);
