@@ -1,3 +1,4 @@
 http://tirania.org/blog/miguel.rss2
 http://alistapart.com/site/abridged-feed
 http://paulrouget.com/index.xml
+http://hollyafrench.com/atom.xml

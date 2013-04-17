@@ -133,7 +133,7 @@ public class RSSReader {
 							.println("(" + articleNum + ")" + entry.getTitle()
 									+ "\t" + entrydate + "\t"
 									+ entry.getLink());
-					if (isDescription) {
+					if (isDescription && entry.getDescription() != null) {
 						System.out.println(entry.getDescription());
 					}
 					articleNum++;
@@ -177,7 +177,7 @@ public class RSSReader {
 						+ "\t" + date + "\t"
 						+ post.getLink();
 				System.out.println(feedOutput);
-				if (isDescription) {
+				if (isDescription && post.getDescription() != null) {
 					System.out.println(post.getDescription());
 				}
 				articleNum++;
@@ -225,7 +225,7 @@ public class RSSReader {
 								+ "\t" + date + "\t"
 								+ post.getLink();
 						System.out.println(feedOutput);
-						if (isDescription) {
+						if (isDescription && post.getDescription() != null) {
 							System.out.println(post.getDescription());
 						}
 						articleNum++;
@@ -260,7 +260,7 @@ public class RSSReader {
 									+ entry.getTitle() + "\t"
 									+ date + "\t"
 									+ entry.getLink());
-							if (isDescription) {
+							if (isDescription && entry.getDescription() != null) {
 								System.out.println(entry.getDescription());
 							}
 							articleNum++;
