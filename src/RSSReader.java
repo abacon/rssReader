@@ -24,6 +24,7 @@ public class RSSReader {
 
     private ArrayList<SyndFeedImpl> feeds;
     private ArgParser argParser;
+    private Date lastRun = new Date(Long.MIN_VALUE);
 
     public RSSReader(ArrayList<SyndFeedImpl> allFeeds) {
         feeds = allFeeds;
@@ -57,14 +58,16 @@ public class RSSReader {
         boolean isDescription = argParser.isDescription();
         
         if (title != null) {
-        	displayByTitle(number, since, isDescription, isDescription, title);
+        	displayByTitle(number, since, isDescription, isDescription, title, isNewest);
         }
         else if (isByDate) {
-        	displayByDate(number, since, isDescription);
+        	displayByDate(number, since, isDescription, isNewest);
 		}
 		else {
-			displayByFeeds(number, since, isByAlpha, isDescription);
+			displayByFeeds(number, since, isByAlpha, isDescription, isNewest);
 		}
+        
+        lastRun = new Date();
         
     }
     
@@ -75,7 +78,7 @@ public class RSSReader {
      * @param isByAlpha Determines whether the display should be alphabetically by title
      * @param isDescription Determines whether to print the articles description too
      */
-    public void displayByFeeds(int number, Date since, boolean isByAlpha, boolean isDescription) {
+    public void displayByFeeds(int number, Date since, boolean isByAlpha, boolean isDescription, boolean isNewest) {
     	ArrayList<SyndFeedImpl> curFeeds;
     	if (isByAlpha)
     		curFeeds = sortPostsByAlpha();
@@ -87,11 +90,14 @@ public class RSSReader {
 			int articleNum = 1;
 		    for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 		        SyndEntryImpl entry = (SyndEntryImpl) i.next();
-		         System.out.println("(" + articleNum + ")" + entry.getTitle() + "\t" + entry.getPublishedDate() + "\t" + entry.getLink());
-				if (isDescription) {
-						System.out.println(entry.getDescription());
-				}
-				articleNum++;
+		        if ((isNewest && entry.getPublishedDate().after(lastRun)) || !isNewest) {
+			         System.out.println("(" + articleNum + ")" + entry.getTitle() + "\t" + entry.getPublishedDate() + "\t" + entry.getLink());
+						if (isDescription) {
+								System.out.println(entry.getDescription());
+						}
+						articleNum++;		        	
+		        }
+
 		     }
 		    System.out.println();
 		}
@@ -103,20 +109,21 @@ public class RSSReader {
      * @param since Earliest date from which an article can be displayed
      * @param isDescription Determines whether a description is included with the article
      */
-    public void displayByDate(int number, Date since, boolean isDescription) {
+    public void displayByDate(int number, Date since, boolean isDescription, boolean isNewest) {
         ArrayList<SyndEntryImpl> posts;
         posts = sortPostsByDate();
     	
         int articleNum = 1;
         for (int i = 0; i < number; i++) {
-        	SyndEntryImpl feed = posts.get(i);
-			String feedOutput = "(" + articleNum + ")" + feed.getTitle() + "\t" + feed.getPublishedDate() + "\t" + feed.getLink();
-			System.out.println(feedOutput);
-			if (isDescription) {
-				System.out.println(feed.getDescription());
-			}
-			articleNum++;
-        	
+        	SyndEntryImpl post = posts.get(i);
+	        if ((isNewest && post.getPublishedDate().after(lastRun)) || !isNewest) {
+				String feedOutput = "(" + articleNum + ")" + post.getTitle() + "\t" + post.getPublishedDate() + "\t" + post.getLink();
+				System.out.println(feedOutput);
+				if (isDescription) {
+					System.out.println(post.getDescription());
+				}
+				articleNum++;
+	        }   	
         }
     }
     
@@ -128,7 +135,7 @@ public class RSSReader {
      * @param isDescription Determines whether we show the article description
      * @param title The pattern we are using to match article titles
      */
-    public void displayByTitle(int number, Date since, boolean isByAlpha, boolean isDescription, Pattern title) {
+    public void displayByTitle(int number, Date since, boolean isByAlpha, boolean isDescription, Pattern title, boolean isNewest) {
     	ArrayList<SyndFeedImpl> curFeeds;
     	if (isByAlpha)
     		curFeeds = sortPostsByAlpha();
@@ -139,15 +146,16 @@ public class RSSReader {
 		for (SyndFeedImpl feed : curFeeds) {
 		    for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 		        SyndEntryImpl entry = (SyndEntryImpl) i.next();
-		        Matcher matcher = title.matcher(entry.getTitle());
-		        if (matcher.find()) {
-			         System.out.println("(" + articleNum + ")" + entry.getTitle() + "\t" + entry.getPublishedDate() + "\t" + entry.getLink());
-						if (isDescription) {
-								System.out.println(entry.getDescription());
-						}
-						articleNum++;
+		        if ((isNewest && entry.getPublishedDate().after(lastRun)) || !isNewest) {
+			        Matcher matcher = title.matcher(entry.getTitle());
+			        if (matcher.find()) {
+				         System.out.println("(" + articleNum + ")" + entry.getTitle() + "\t" + entry.getPublishedDate() + "\t" + entry.getLink());
+							if (isDescription) {
+									System.out.println(entry.getDescription());
+							}
+							articleNum++;
+			        }        	
 		        }
-
 		     }
 		}
     }
