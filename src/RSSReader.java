@@ -8,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import be.ugent.twijug.jclops.CLManager;
@@ -16,6 +18,7 @@ import be.ugent.twijug.jclops.CLParseException;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
+import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
@@ -391,23 +394,24 @@ public class RSSReader {
        ArrayList<String> urls = fp.getLines(argParser.getFilename());
        ArrayList<SyndFeedImpl> feeds = new ArrayList<SyndFeedImpl>();
        for (String url : urls) {
+    	   try {
                feeds.add(makeSyndFeedImplFromUrl(url));
+			} catch (MalformedURLException e) {
+				System.out.println("Warning: " + url + " is not a valid URL.\n");
+			} catch (IOException e) {
+				System.out.println("Warning: URL " + url + " could not be read.\n");
+			} catch (FeedException e) {
+				System.out.println("Warning: Feed at URL " + url + " could not be parsed.\n");
+			}
        }
        return feeds;
     }
     
-    public SyndFeedImpl makeSyndFeedImplFromUrl(String url) {
-    	try {
+    public SyndFeedImpl makeSyndFeedImplFromUrl(String url) throws IllegalArgumentException, FeedException, IOException {
 	    	URL feedSource = new URL(url);
 	        SyndFeedInput input = new SyndFeedInput();
 	        SyndFeedImpl feed = (SyndFeedImpl) input.build(new XmlReader(feedSource));
 	        return feed;
-    	}
-    	catch(Exception ex) {
-			System.out.println("ERROR: " + ex.getMessage());
-			ex.printStackTrace();
-			return null;
-    	}
     }
 
 	/**
