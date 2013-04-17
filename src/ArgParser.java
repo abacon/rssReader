@@ -157,11 +157,12 @@ public class ArgParser {
 	 */
 	@Option(description="<S> the date for which to display posts published on or after")
 	public void setSince(String since) {
-		DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			this.since = df.parse(since);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			System.out.println("Error: Date for option --since not valid. Use format yyyy-mm-dd");
+			this.since = new Date(0); 
 		}
 	}
 
