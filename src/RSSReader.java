@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Iterator;
 
@@ -58,7 +59,7 @@ public class RSSReader {
         boolean isDescription = argParser.isDescription();
         
         if (title != null) {
-        	// match the regexp and figure out what we want to do here.  do we take into account the number variable here?
+        	displayByTitle(number, since, isDescription, isDescription, title);
         }
         else if (isByDate) {
         	displayByDate(number, since, isDescription);
@@ -78,12 +79,14 @@ public class RSSReader {
     	
 		for (SyndFeedImpl feed : curFeeds) {
 			System.out.println(feed.getTitle().toUpperCase());
+			int articleNum = 1;
 		    for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 		        SyndEntryImpl entry = (SyndEntryImpl) i.next();
-		         System.out.println(entry.getTitle() + "\t" + entry.getPublishedDate() + "\t" + entry.getLink());
+		         System.out.println("(" + articleNum + ")" + entry.getTitle() + "\t" + entry.getPublishedDate() + "\t" + entry.getLink());
 				if (isDescription) {
 						System.out.println(entry.getDescription());
 				}
+				articleNum++;
 		     }
 		    System.out.println();
 		}
@@ -93,15 +96,41 @@ public class RSSReader {
         ArrayList<SyndEntryImpl> posts;
         posts = sortPostsByDate();
     	
+        int articleNum = 1;
         for (int i = 0; i < number; i++) {
         	SyndEntryImpl feed = posts.get(i);
-			String feedOutput = feed.getTitle() + "\t" + feed.getPublishedDate() + "\t" + feed.getLink();
+			String feedOutput = "(" + articleNum + ")" + feed.getTitle() + "\t" + feed.getPublishedDate() + "\t" + feed.getLink();
 			System.out.println(feedOutput);
 			if (isDescription) {
 				System.out.println(feed.getDescription());
 			}
+			articleNum++;
         	
         }
+    }
+    
+    public void displayByTitle(int number, Date since, boolean isByAlpha, boolean isDescription, Pattern title) {
+    	ArrayList<SyndFeedImpl> curFeeds;
+    	if (isByAlpha)
+    		curFeeds = sortPostsByAlpha();
+    	else
+    		curFeeds = feeds;
+    	
+    	int articleNum = 1;
+		for (SyndFeedImpl feed : curFeeds) {
+		    for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
+		        SyndEntryImpl entry = (SyndEntryImpl) i.next();
+		        Matcher matcher = title.matcher(entry.getTitle());
+		        if (matcher.find()) {
+			         System.out.println("(" + articleNum + ")" + entry.getTitle() + "\t" + entry.getPublishedDate() + "\t" + entry.getLink());
+						if (isDescription) {
+								System.out.println(entry.getDescription());
+						}
+						articleNum++;
+		        }
+
+		     }
+		}
     }
     
     /**
