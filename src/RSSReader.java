@@ -83,7 +83,7 @@ public class RSSReader {
 		boolean isDescription = argParser.isDescription();
 
 		if (title != null) {
-			displayByTitle(number, since, isDescription, isDescription, title,
+			displayByTitle(number, since, isByAlpha, isByDate, isDescription, title,
 					isNewest);
 		} else if (isByDate) {
 			displayByDate(number, since, isDescription, isNewest);
@@ -187,34 +187,61 @@ public class RSSReader {
 	 * @param title
 	 *            The pattern we are using to match article titles
 	 */
-	public void displayByTitle(int number, Date since, boolean isByAlpha,
+	public void displayByTitle(int number, Date since, boolean isByAlpha, boolean isByDate,
 			boolean isDescription, Pattern title, boolean isNewest) {
-		ArrayList<SyndFeedImpl> curFeeds;
-		if (isByAlpha)
-			curFeeds = sortPostsByAlpha();
-		else
-			curFeeds = this.getFeeds();
+		
+		if (isByDate) {
+			ArrayList<SyndEntryImpl> posts;
+			posts = sortPostsByDate();
 
-		int articleNum = 1;
-		for (SyndFeedImpl feed : curFeeds) {
-			for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
-				SyndEntryImpl entry = (SyndEntryImpl) i.next();
-				if ((isNewest && entry.getPublishedDate().after(lastRun))
+			int articleNum = 1;
+			for (int i = 0; i < number; i++) {
+				SyndEntryImpl post = posts.get(i);
+				if ((isNewest && post.getPublishedDate().after(lastRun))
 						|| !isNewest) {
-					Matcher matcher = title.matcher(entry.getTitle());
+					Matcher matcher = title.matcher(post.getTitle());
 					if (matcher.find()) {
-						System.out.println("(" + articleNum + ")"
-								+ entry.getTitle() + "\t"
-								+ entry.getPublishedDate() + "\t"
-								+ entry.getLink());
+						String feedOutput = "(" + articleNum + ")" + post.getTitle()
+								+ "\t" + post.getPublishedDate() + "\t"
+								+ post.getLink();
+						System.out.println(feedOutput);
 						if (isDescription) {
-							System.out.println(entry.getDescription());
+							System.out.println(post.getDescription());
 						}
 						articleNum++;
 					}
 				}
+			}	
+		}
+		else {
+			ArrayList<SyndFeedImpl> curFeeds;
+			if (isByAlpha)
+				curFeeds = sortPostsByAlpha();
+			else
+				curFeeds = feeds;
+
+			int articleNum = 1;
+			for (SyndFeedImpl feed : curFeeds) {
+				for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
+					SyndEntryImpl entry = (SyndEntryImpl) i.next();
+					if ((isNewest && entry.getPublishedDate().after(lastRun))
+							|| !isNewest) {
+						Matcher matcher = title.matcher(entry.getTitle());
+						if (matcher.find()) {
+							System.out.println("(" + articleNum + ")"
+									+ entry.getTitle() + "\t"
+									+ entry.getPublishedDate() + "\t"
+									+ entry.getLink());
+							if (isDescription) {
+								System.out.println(entry.getDescription());
+							}
+							articleNum++;
+						}
+					}
+				}
 			}
 		}
+	
 	}
 
 	/**
