@@ -62,6 +62,10 @@ public class RSSReader {
 		return this.feeds;
 	}
 	
+	/**
+	 * This parses a date file into a date object so we know when we last ran the parser.
+	 * @return date at which the feed reader was last run
+	 */
 	public Date getLastRun() {
 		BufferedReader br = null;
 		try {
@@ -451,6 +455,9 @@ public class RSSReader {
 	        return feed;
     }
     
+    /**
+     * This writes the current time out to the date file so we can keep track of when this was last run.
+     */
     public void writeTimeToFile(){
 		FileOutputStream fop = null;
 		File file;
