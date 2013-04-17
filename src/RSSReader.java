@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.net.URL;
 
 import be.ugent.twijug.jclops.CLManager;
+import be.ugent.twijug.jclops.CLParseException;
 
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
@@ -318,6 +319,12 @@ public class RSSReader {
 		CLManager options = new CLManager(argParser);
 		options.parse(args);
 
+	    try {
+	        options.parse(args);
+	     } catch (CLParseException ex) {
+	         System.out.println (ex);
+	     }
+		
 		// Collect any remaining command line arguments that were not parsed.
 		String[] remaining = options.getRemainingArguments();
 
