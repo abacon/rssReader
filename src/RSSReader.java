@@ -2,13 +2,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.regex.Pattern;
 
 import be.ugent.twijug.jclops.CLManager;
 
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
-import com.sun.tools.javac.util.List;
 
 
 /**
@@ -21,7 +19,7 @@ import com.sun.tools.javac.util.List;
 public class RSSReader {
 
     private ArrayList<SyndFeedImpl> feeds;
-    private ArgParser argParser;
+    private static ArgParser argParser;
     private static final String ALPHA = "alpha";
     private static final String DATE = "date";
 
@@ -108,10 +106,10 @@ ANOTHER FEED NAME
     * @param SyndFeedImpl curFeed the current feed from which we want to get posts
     * @return an array list of SyndEntry objects, which are the posts
     */
-    public List<SyndEntryImpl> getPostsFromFeed(SyndFeedImpl curFeed) {
+    public ArrayList<SyndEntryImpl> getPostsFromFeed(SyndFeedImpl curFeed) {
         //allPosts = null;
         //return allPosts;
-    	return (List<SyndEntryImpl>) curFeed.getEntries();
+    	return (ArrayList<SyndEntryImpl>) curFeed.getEntries();
 
     }
 
@@ -123,7 +121,7 @@ ANOTHER FEED NAME
         // worst case we will call this in the constructor to populate in inst var if needed.
     	ArrayList<SyndEntryImpl> allPosts = new ArrayList<SyndEntryImpl>();
     	for (SyndFeedImpl feed : feeds) {
-    		List<SyndEntryImpl> curPosts = getPostsFromFeed(feed);
+    		ArrayList<SyndEntryImpl> curPosts = getPostsFromFeed(feed);
     		for (SyndEntryImpl post : curPosts) 
     			allPosts.add(post);  		
     	}
@@ -179,8 +177,9 @@ ANOTHER FEED NAME
     /**
     * Parses the command line arguments provided by the user.  
     * @param String[] args The arguments provided by the suer
+    * @author Amy Csizmar Dalal
     */
-    public void parseArguments(String[] args) {
+    public static void parseArguments(String[] args) {
         // This is the object we'll be using
         argParser = new ArgParser();
 
@@ -208,6 +207,18 @@ ANOTHER FEED NAME
         System.out.println("Number of feeds to list: " + argParser.getNumber());
     }
 
+    public static ArrayList<SyndFeedImpl> getSyndFeedsFromFile(String filename) {
+    	FileParser fp = new FileParser();
+    	ArrayList<String> urls = fp.getLines(argParser.getFilename());
+    	ArrayList<SyndFeedImpl> feeds = null;
+    	for (String url : urls) {
+    		feeds.add(makeSyndFeedImplFromUrl(url));
+    	}
+    }
+    
+    public static SyndFeedImpl makeSyndFeedImplFromUrl(String) {
+    	
+    }
 
    /** Instantiates a new RSSReader, calls it with the arguments from
    * the command line.
@@ -218,8 +229,8 @@ ANOTHER FEED NAME
     public static void main(String[] args) {
         parseArguments(args);
         // Parse the file. Return some array, FeedUrls.
-        ArrayList<String> feedUrls = null;
-        RSSReader reader = RSSReader(feedUrls);
+        ArrayList<SyndFeedImpl> feeds = getSyndFeedsFromFile(argParser.getFilename());
+        RSSReader reader = new RSSReader(feeds);
         // or like:
         // reader.set_sort('name');
         // reader.run('args');
