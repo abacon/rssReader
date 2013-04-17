@@ -113,7 +113,7 @@ public class RSSReader {
 			int articleNum = 1;
 			for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 				SyndEntryImpl entry = (SyndEntryImpl) i.next();
-				if ((isNewest && entry.getPublishedDate().after(lastRun))
+				if ((isNewest && entry.getPublishedDate().after(this.getLastRun()))
 						|| !isNewest) {
 					System.out
 							.println("(" + articleNum + ")" + entry.getTitle()
@@ -149,7 +149,7 @@ public class RSSReader {
 		int articleNum = 1;
 		for (int i = 0; i < number; i++) {
 			SyndEntryImpl post = posts.get(i);
-			if ((isNewest && post.getPublishedDate().after(lastRun))
+			if ((isNewest && post.getPublishedDate().after(this.getLastRun()))
 					|| !isNewest) {
 				String feedOutput = "(" + articleNum + ")" + post.getTitle()
 						+ "\t" + post.getPublishedDate() + "\t"
@@ -188,7 +188,7 @@ public class RSSReader {
 			int articleNum = 1;
 			for (int i = 0; i < number; i++) {
 				SyndEntryImpl post = posts.get(i);
-				if ((isNewest && post.getPublishedDate().after(lastRun))
+				if ((isNewest && post.getPublishedDate().after(this.getLastRun()))
 						|| !isNewest) {
 					Matcher matcher = title.matcher(post.getTitle());
 					if (matcher.find()) {
@@ -215,7 +215,7 @@ public class RSSReader {
 			for (SyndFeedImpl feed : curFeeds) {
 				for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 					SyndEntryImpl entry = (SyndEntryImpl) i.next();
-					if ((isNewest && entry.getPublishedDate().after(lastRun))
+					if ((isNewest && entry.getPublishedDate().after(this.getLastRun()))
 							|| !isNewest) {
 						Matcher matcher = title.matcher(entry.getTitle());
 						if (matcher.find()) {
