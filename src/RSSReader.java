@@ -67,7 +67,7 @@ public class RSSReader {
 			displayByFeeds(number, since, isByAlpha, isDescription, isNewest);
 		}
         
-        lastRun = new Date();
+        this.lastRun = new Date();
         
     }
     
