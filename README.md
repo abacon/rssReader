@@ -1,32 +1,19 @@
 rssReader
 =========
 
-Some RSS reader for class
+This RSS reader was created by Veronica Lynn, Holly French, and Andrew
+Bacon for CS204 S'13, Carleton College.
 
-What does it know?
-*what syndfeed objects it has
-*when it was last run
-*all of the command line flags (and which are active)
-*all posts (depending on how sort is implemented) (might make most sense for it to just be local, though)
+Usage:
+./rss_reader.sh [options] urls.txt
 
-What does it do?
-*display output
-*getPostFromFeed
-*getAllPosts (calls above)
-*sortPosts(using flags)
-*matchByRegex
-*listAllFeeds
-*getFeedInfo
+urls.txt must be a text file containing urls of rss feeds, one feed per
+line.
 
-How is it constructed?
-*command line arguments (bydate, byalpha, since, number of stories per feed, title (regex), description on/off, newest)
-*feeds (file containing list of feed URLs). These will become an array of syndfeed objects.
-
-
-
-
-Some useful javadoc things:
-    Feed entry (i.e. post) class:
-http://www.jarvana.com/jarvana/view/net/java/dev/rome/rome/1.0.0/rome-1.0.0-javadoc.jar!/index.html
-    Feed class:
-http://www.jarvana.com/jarvana/view/net/java/dev/rome/rome/1.0.0/rome-1.0.0-javadoc.jar!/index.html
+Options:
+  --by-date        Commingles all posts and sorts them according to date.
+  --by-alpha       Shows posts by feed, where feeds are in alphabetical
+                   order.
+  --description    Show descriptions of posts.
+  --number=<NUM>   Limits the number of posts shown from each feed
+  --title=REGEX    Limits posts to those matching the specified regex.
