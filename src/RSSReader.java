@@ -129,7 +129,7 @@ public class RSSReader {
 						System.out.println(entry.getDescription());
 					}
 					articleNum++;
-					if (articleNum <= number)
+					if (articleNum > number)
 						break;
 				}
 
