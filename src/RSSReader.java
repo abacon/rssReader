@@ -120,7 +120,7 @@ public class RSSReader {
 					entrydate = "";
 						
 				if ((isNewest && entry.getPublishedDate().after(this.getLastRun()))
-						|| !isNewest) {
+						|| !isNewest && entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) {
 					System.out
 							.println("(" + articleNum + ")" + entry.getTitle()
 									+ "\t" + entrydate + "\t"
@@ -158,7 +158,7 @@ public class RSSReader {
 		for (int i = 0; i < number; i++) {
 			SyndEntryImpl post = posts.get(i);
 			if ((isNewest && post.getPublishedDate().after(this.getLastRun()))
-					|| !isNewest) {
+					|| !isNewest && post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) {
 				String feedOutput = "(" + articleNum + ")" + post.getTitle()
 						+ "\t" + post.getPublishedDate() + "\t"
 						+ post.getLink();
@@ -189,6 +189,7 @@ public class RSSReader {
 	public void displayByTitle(int number, Date since, boolean isByAlpha, boolean isByDate,
 			boolean isDescription, Pattern title, boolean isNewest) {
 		
+		// if we want to display by title and by date
 		if (isByDate) {
 			ArrayList<SyndEntryImpl> posts;
 			posts = sortPostsByDate();
@@ -197,7 +198,7 @@ public class RSSReader {
 			for (int i = 0; i < number; i++) {
 				SyndEntryImpl post = posts.get(i);
 				if ((isNewest && post.getPublishedDate().after(this.getLastRun()))
-						|| !isNewest) {
+						|| !isNewest && post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) {
 					Matcher matcher = title.matcher(post.getTitle());
 					if (matcher.find()) {
 						String feedOutput = "(" + articleNum + ")" + post.getTitle()
@@ -212,6 +213,8 @@ public class RSSReader {
 				}
 			}	
 		}
+		
+		// if we do not care about date
 		else {
 			ArrayList<SyndFeedImpl> curFeeds;
 			if (isByAlpha)
@@ -224,7 +227,7 @@ public class RSSReader {
 				for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 					SyndEntryImpl entry = (SyndEntryImpl) i.next();
 					if ((isNewest && entry.getPublishedDate().after(this.getLastRun()))
-							|| !isNewest) {
+							|| !isNewest && entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) {
 						Matcher matcher = title.matcher(entry.getTitle());
 						if (matcher.find()) {
 							System.out.println("(" + articleNum + ")"
@@ -262,8 +265,6 @@ public class RSSReader {
 	 * @return allPosts an array list of all posts
 	 */
 	public ArrayList<SyndEntryImpl> getAllPosts() {
-		// worst case we will call this in the constructor to populate in inst
-		// var if needed.
 		ArrayList<SyndEntryImpl> allPosts = new ArrayList<SyndEntryImpl>();
 		for (SyndFeedImpl feed : feeds) {
 			List<SyndEntryImpl> curPosts = getPostsFromFeed(feed);
@@ -305,6 +306,7 @@ public class RSSReader {
 			public int compare(SyndEntryImpl o1, SyndEntryImpl o2) {
 				Date a;
 				Date b;
+				// error handling: there are cases where posts do not have dates
 				try {
 					a = o1.getPublishedDate();
 				} catch (Exception e) {
@@ -382,7 +384,7 @@ public class RSSReader {
 	        return feed;
     	}
     	catch(Exception ex) {
-			System.out.println("ERROR: "+ex.getMessage());
+			System.out.println("ERROR: " + ex.getMessage());
 			ex.printStackTrace();
 			return null;
     	}
