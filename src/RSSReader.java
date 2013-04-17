@@ -1,3 +1,6 @@
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -7,7 +10,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +38,12 @@ public class RSSReader {
 
 	private ArrayList<SyndFeedImpl> feeds;
 	private ArgParser argParser;
-	private Date lastRun = new Date(Long.MIN_VALUE);
+	private Date lastRun;
+	private static final String LAST_RUN_FILE = "data/lastRun.txt";
+	
+	public RSSReader() {
+		this.lastRun = getLastRun();
+	}
 
 	public void setArgParser(ArgParser argParser) {
 		this.argParser = argParser;
@@ -52,7 +63,33 @@ public class RSSReader {
 	}
 	
 	public Date getLastRun() {
-		return lastRun;
+		BufferedReader br = null;
+		try {
+			String sCurrentLine;
+
+			br = new BufferedReader(new FileReader(LAST_RUN_FILE));
+
+			while ((sCurrentLine = br.readLine()) != null) {
+				String date = sCurrentLine;
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				try {
+					return df.parse(date);
+				} catch (ParseException e) {
+					return new Date(0);
+				}
+			}
+
+		} catch (IOException e) {
+			return new Date(0);
+		} finally {
+			try {
+				if (br != null)
+					br.close();
+			} catch (IOException ex) {
+				return new Date(0);
+			}
+		}
+		return new Date(0);
 	}
 
 	public void setLastRun(Date lastRun) {
@@ -84,7 +121,7 @@ public class RSSReader {
 			displayByFeeds(number, since, isByAlpha, isDescription, isNewest);
 		}
 		
-		this.setLastRun(new Date());
+		writeTimeToFile();
 
 	}
 
@@ -120,14 +157,13 @@ public class RSSReader {
 					entrydate = entry.getPublishedDate().toString();
 				else 
 					entrydate = "Date unknown";
-					
+									
 				/* we only print if the date is correct: 
 				 * if we want the newest, we only print the articles that happened after it was last run
 				 * if we are imposing the since condition, we only print articles after the specified date and time.
 				 * we also include error handling since apparently not all articles have a date.
 				 */
-				if ((isNewest && entry.getPublishedDate().after(this.getLastRun()))
-						|| !isNewest && entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) {
+				if (!isNewest && (entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) || (!entrydate.equals("Date unknown") && isNewest && entry.getPublishedDate().after(lastRun))) {
 					System.out
 							.println("(" + articleNum + ")" + entry.getTitle()
 									+ "\t" + entrydate + "\t"
@@ -169,8 +205,7 @@ public class RSSReader {
 			 * if we are imposing the since condition, we only print articles after the specified date and time.
 			 * we also include error handling since apparently not all articles have a date.
 			 */
-			if ((isNewest && post.getPublishedDate().after(this.getLastRun()))
-					|| !isNewest && post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) {
+			if (!isNewest && (post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) || (isNewest && post.getPublishedDate().after(lastRun))) {
 				String date = post.getPublishedDate() != null ? post.getPublishedDate().toString() : "Date unknown";
 				String feedOutput = "(" + articleNum + ")" + post.getTitle()
 						+ "\t" + date + "\t"
@@ -215,8 +250,7 @@ public class RSSReader {
 				 * if we are imposing the since condition, we only print articles after the specified date and time.
 				 * we also include error handling since apparently not all articles have a date.
 				 */
-				if ((isNewest && post.getPublishedDate().after(this.getLastRun()))
-						|| !isNewest && post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) {
+				if (!isNewest && (post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) || (isNewest && post.getPublishedDate().after(lastRun))) {
 					Matcher matcher = title.matcher(post.getTitle());
 					if (matcher.find()) {
 						String date = post.getPublishedDate() != null ? post.getPublishedDate().toString() : "Date unknown";
@@ -250,8 +284,7 @@ public class RSSReader {
 					 * if we are imposing the since condition, we only print articles after the specified date and time.
 					 * we also include error handling since apparently not all articles have a date.
 					 */
-					if ((isNewest && entry.getPublishedDate().after(this.getLastRun()))
-							|| !isNewest && entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) {
+					if (!isNewest && (entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) || (isNewest && entry.getPublishedDate().after(lastRun))) {
 						Matcher matcher = title.matcher(entry.getTitle());
 						if (matcher.find()) {
 							String date = entry.getPublishedDate() != null ? entry.getPublishedDate().toString() : "Date unknown";
@@ -417,7 +450,42 @@ public class RSSReader {
 	        SyndFeedImpl feed = (SyndFeedImpl) input.build(new XmlReader(feedSource));
 	        return feed;
     }
-
+    
+    public void writeTimeToFile(){
+		FileOutputStream fop = null;
+		File file;
+		Date date = new Date();
+		String content = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+		try {
+ 
+			file = new File(LAST_RUN_FILE);
+			fop = new FileOutputStream(file);
+ 
+			// if file does not exist, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+ 
+			// get the content in bytes
+			byte[] contentInBytes = content.getBytes();
+ 
+			fop.write(contentInBytes);
+			fop.flush();
+			fop.close();
+  
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (fop != null) {
+					fop.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} 	
+    }
+    
 	/**
 	 * Instantiates a new RSSReader, calls it with the arguments from the
 	 * command line.
