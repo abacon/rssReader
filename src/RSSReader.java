@@ -128,7 +128,7 @@ public class RSSReader {
     }
     
     /**
-     * displayByTitle displayes articles that match a given regular expression for a title
+     * displayByTitle displays articles that match a given regular expression for a title
      * @param number Number of posts
      * @param since Earliest date from which an article can be displayed
      * @param isByAlpha Determines whether we sort the titles alphabetically
