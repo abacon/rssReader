@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.regex.Pattern;
+import java.util.Iterator;
 
 import be.ugent.twijug.jclops.CLManager;
 
@@ -22,8 +23,6 @@ public class RSSReader {
 
     private ArrayList<SyndFeedImpl> feeds;
     private ArgParser argParser;
-    private static final String ALPHA = "alpha";
-    private static final String DATE = "date";
 
     public RSSReader(ArrayList<SyndFeedImpl> allFeeds) {
         feeds = allFeeds;
@@ -48,16 +47,6 @@ public class RSSReader {
     * --newest (optional)
     * 
     * FEED NAME
-(1) story title [tab] publication date [tab] link
-[description]
-(2) title [tab] publication date [tab] link [tab]
-[description]
-
-ANOTHER FEED NAME
-(1) story title [tab] publication date [tab] link
-[description]
-(2) title [tab] publication date [tab] link [tab]
-[description]
     */
     public void display() {
         int number = argParser.getNumber();
@@ -72,8 +61,7 @@ ANOTHER FEED NAME
         	// match the regexp and figure out what we want to do here.  do we take into account the number variable here?
         }
         else if (isByDate) {
-	        ArrayList<SyndEntryImpl> posts;
-	        posts = sortPostsByDate();
+        	displayByDate(number, since, isDescription);
 		}
 		else {
 			displayByFeeds(number, since, isByAlpha, isDescription);
@@ -89,19 +77,33 @@ ANOTHER FEED NAME
     		curFeeds = feeds;
     	
 		for (SyndFeedImpl feed : curFeeds) {
-			for (int i = 0; i < number; i++){
-				if (feed.getPublishedDate().compareTo(since) >= 0) {
-					String feedOutput = feed.getTitle() + "\t" + feed.getPublishedDate() + "\t" + feed.getLink();
-					System.out.println(feedOutput);
-					if (isDescription) {
-						String description = feed.getDescription();
-						System.out.println(description);
-					}
+			System.out.println(feed.getTitle().toUpperCase());
+		    for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
+		        SyndEntryImpl entry = (SyndEntryImpl) i.next();
+		         System.out.println(entry.getTitle() + "\t" + entry.getPublishedDate() + "\t" + entry.getLink());
+				if (isDescription) {
+						System.out.println(entry.getDescription());
 				}
-			}
+		     }
+		    System.out.println();
 		}
     }
 
+    public void displayByDate(int number, Date since, boolean isDescription) {
+        ArrayList<SyndEntryImpl> posts;
+        posts = sortPostsByDate();
+    	
+        for (int i = 0; i < number; i++) {
+        	SyndEntryImpl feed = posts.get(i);
+			String feedOutput = feed.getTitle() + "\t" + feed.getPublishedDate() + "\t" + feed.getLink();
+			System.out.println(feedOutput);
+			if (isDescription) {
+				System.out.println(feed.getDescription());
+			}
+        	
+        }
+    }
+    
     /**
     * TODO: double check the object return type
     * Gets all posts from a particular feed and will accept a synd feed impl as a parameter
@@ -109,8 +111,6 @@ ANOTHER FEED NAME
     * @return an array list of SyndEntry objects, which are the posts
     */
     public List<SyndEntryImpl> getPostsFromFeed(SyndFeedImpl curFeed) {
-        //allPosts = null;
-        //return allPosts;
     	return (List<SyndEntryImpl>) curFeed.getEntries();
 
     }
@@ -128,20 +128,6 @@ ANOTHER FEED NAME
     			allPosts.add(post);  		
     	}
     	return allPosts;
-    }
-
-    /**
-    * Sort posts by a given sort mode (the current options are alphabetically and by date
-    * @param String sortMode the mode we are using to sort, either alphabetically or by date (can be expanded later)
-    * @return ArrayList<SyndEntryImpl> posts An array of posts sorted according to the mode parameter
-    */
-    public ArrayList<SyndEntryImpl> sortPosts(String sortMode) {
-        // TODO: do we want the functionality of sorting a subset of posts?
-        if (sortMode.equals("alpha"))
-            sortPostsByAlpha();
-        else if (sortMode.equals("date"))
-            return sortPostsByDate();
-        return null;
     }
 
     /**
