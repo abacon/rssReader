@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * date: 9 April 2013
  */
 
-@AtMostOneOf({"byDate", "byAlpha"})
+@AtMostOneOf({"by-date", "by-alpha"})
 public class ArgParser {
 	// These instance variables are derived from the command line arguments passed in.
 	
