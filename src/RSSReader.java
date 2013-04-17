@@ -117,7 +117,7 @@ public class RSSReader {
 				if (entry.getPublishedDate() != null)
 					entrydate = entry.getPublishedDate().toString();
 				else 
-					entrydate = "";
+					entrydate = "Date unknown";
 					
 				/* we only print if the date is correct: 
 				 * if we want the newest, we only print the articles that happened after it was last run
@@ -169,8 +169,9 @@ public class RSSReader {
 			 */
 			if ((isNewest && post.getPublishedDate().after(this.getLastRun()))
 					|| !isNewest && post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) {
+				String date = post.getPublishedDate() != null ? post.getPublishedDate().toString() : "Date unknown";
 				String feedOutput = "(" + articleNum + ")" + post.getTitle()
-						+ "\t" + post.getPublishedDate() + "\t"
+						+ "\t" + date + "\t"
 						+ post.getLink();
 				System.out.println(feedOutput);
 				if (isDescription) {
@@ -216,8 +217,9 @@ public class RSSReader {
 						|| !isNewest && post.getPublishedDate() != null ? post.getPublishedDate().after(since) : true) {
 					Matcher matcher = title.matcher(post.getTitle());
 					if (matcher.find()) {
+						String date = post.getPublishedDate() != null ? post.getPublishedDate().toString() : "Date unknown";
 						String feedOutput = "(" + articleNum + ")" + post.getTitle()
-								+ "\t" + post.getPublishedDate() + "\t"
+								+ "\t" + date + "\t"
 								+ post.getLink();
 						System.out.println(feedOutput);
 						if (isDescription) {
@@ -250,14 +252,17 @@ public class RSSReader {
 							|| !isNewest && entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) {
 						Matcher matcher = title.matcher(entry.getTitle());
 						if (matcher.find()) {
+							String date = entry.getPublishedDate() != null ? entry.getPublishedDate().toString() : "Date unknown";
 							System.out.println("(" + articleNum + ")"
 									+ entry.getTitle() + "\t"
-									+ entry.getPublishedDate() + "\t"
+									+ date + "\t"
 									+ entry.getLink());
 							if (isDescription) {
 								System.out.println(entry.getDescription());
 							}
 							articleNum++;
+							if (articleNum > number)
+								break;
 						}
 					}
 				}
