@@ -178,7 +178,7 @@ public class RSSReader {
 							+ entry.getTitle() + "\t" + entrydate + "\t"
 							+ entry.getLink());
 					if (isDescription && entry.getDescription() != null) {
-						System.out.println(entry.getDescription());
+						System.out.println(entry.getDescription().getValue());
 					}
 					articleNum++;
 					if (articleNum > number)
@@ -226,7 +226,7 @@ public class RSSReader {
 						+ "\t" + date + "\t" + post.getLink();
 				System.out.println(feedOutput);
 				if (isDescription && post.getDescription() != null) {
-					System.out.println(post.getDescription());
+					System.out.println(post.getDescription().getValue());
 				}
 				articleNum++;
 			}
@@ -280,7 +280,7 @@ public class RSSReader {
 								+ post.getLink();
 						System.out.println(feedOutput);
 						if (isDescription && post.getDescription() != null) {
-							System.out.println(post.getDescription());
+							System.out.println(post.getDescription().getValue());
 						}
 						articleNum++;
 					}
@@ -322,7 +322,7 @@ public class RSSReader {
 									+ entry.getTitle() + "\t" + date + "\t"
 									+ entry.getLink());
 							if (isDescription && entry.getDescription() != null) {
-								System.out.println(entry.getDescription());
+								System.out.println(entry.getDescription().getValue());
 							}
 							articleNum++;
 							if (articleNum > number)
@@ -434,8 +434,13 @@ public class RSSReader {
 			options.parse(args);
 		} catch (CLParseException ex) {
 			System.out.println(ex);
+		        System.out.println (options.getUsageMessage());
 		}
-
+		
+		if (this.getArgParser().showHelp()) {
+			System.err.println(options.getUsageMessage());
+			System.exit(1);
+		}
 		// Collect any remaining command line arguments that were not parsed.
 		String[] remaining = options.getRemainingArguments();
 

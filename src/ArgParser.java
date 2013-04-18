@@ -43,6 +43,9 @@ public class ArgParser {
 	/** The file containing the list of feeds */
 	private String filename;
 
+	/** Whether or not to display a usage message */
+	private boolean showHelp;
+
 	/**
 	 * The constructor sets default values for the instance variables, in case these are
 	 * not set by command line options.
@@ -70,7 +73,7 @@ public class ArgParser {
 	 * Turn on the "sort by date" flag.
 	 * Automatically turns off "sort by alpha" flag.
 	 */
-	@Option(description="sort by date")
+	@Option(description="Sort posts by date.",shortName='d')
 	public void setByDate() {
 		this.byDate = true;
 		this.byAlpha = false;
@@ -88,7 +91,7 @@ public class ArgParser {
 	 * Turn on the "sort by alpha" flag.
 	 * Automatically turns off the "sort by date" flag.
 	 */
-	@Option(description="sort by alpha")
+	@Option(description="Show feeds in alphabetical order.")
 	public void setByAlpha() {
 		this.byAlpha = true;
 		this.byDate = false;
@@ -105,7 +108,7 @@ public class ArgParser {
 	/**
 	 * Turn on the "show newest" flag.
 	 */
-	@Option(description="show newest")
+	@Option(description="Show only those items which are new since your last use of RSSReader.",shortName='n')
 	public void setNewest() {
 		this.newest = true;
 	}
@@ -121,7 +124,7 @@ public class ArgParser {
 	/**
 	 * Turn on the "show description" flag.
 	 */
-	@Option(description="show description")
+	@Option(description="Show a description under each post.",shortName='D')
 	public void setDescription() {
 		this.description = true;
 	}
@@ -138,7 +141,7 @@ public class ArgParser {
 	 * Sets the number of posts per feed to display
 	 * @param number the number of posts
 	 */
-	@Option(description="<N> the number of posts per feed to display")
+	@Option(description="<N> the number of posts per feed to display.", shortName='N')
 	public void setNumber(int number) {
 		this.number = number;
 	}
@@ -155,7 +158,7 @@ public class ArgParser {
 	 * Sets the date for which to display posts published on or after
 	 * @param since the date for which to display posts published on or after
 	 */
-	@Option(description="<S> the date for which to display posts published on or after")
+	@Option(description="<S> the date for which to display posts published on or after.", shortName='S')
 	public void setSince(String since) {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		try {
@@ -178,7 +181,7 @@ public class ArgParser {
 	 * Sets the REGEX with which to match feed titles.
 	 * @param title the string to be parsed into a REGEX for title matching
 	 */
-	@Option(description="<S> the regex with which to match feed titles")
+	@Option(description="<S> the regex with which to match feed titles.")
 	public void setTitle(String title) {
 		this.title = Pattern.compile(title);
 	}
@@ -187,6 +190,7 @@ public class ArgParser {
 	 * Sets the name of the input feed file
 	 * @param filename the input file name containing the feeds
 	 */
+	@Option(description="The location of a file containing feed URLs, one per line.")
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
@@ -197,6 +201,23 @@ public class ArgParser {
 	 */
 	public String getFilename() {
 		return filename;
+	}
+
+	/**
+	 * Sets whether or not to show help.
+	 */
+	@Option(shortName = 'h', 
+		description = "Displays this message", 
+		exclude = Exclusion.OTHER_OPTIONS_OR_ARGUMENTS)
+	public void setHelp() {
+		this.showHelp= true;
+	}
+
+	/**
+	 * Gets whether or not to show the help.
+	 */
+	public boolean showHelp() {
+		return this.showHelp;
 	}
 
 }
