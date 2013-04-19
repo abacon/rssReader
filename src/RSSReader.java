@@ -503,12 +503,10 @@ public class RSSReader {
 			file = new File(LAST_RUN_FILE);
 			fop = new FileOutputStream(file);
 
-			// if file does not exist, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}
 
-			// get the content in bytes
 			byte[] contentInBytes = content.getBytes();
 
 			fop.write(contentInBytes);
