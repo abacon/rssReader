@@ -169,11 +169,7 @@ public class RSSReader {
 				 * articles after the specified date and time. we also include
 				 * error handling since apparently not all articles have a date.
 				 */
-				if (!isNewest
-						&& (entry.getPublishedDate() != null ? entry
-								.getPublishedDate().after(since) : true)
-						|| (!entrydate.equals("Date unknown") && isNewest && entry
-								.getPublishedDate().after(lastRun))) {
+				if (isPrintable(isNewest, entry, since)) {
 					System.out.println("(" + articleNum + ")"
 							+ entry.getTitle() + "\t" + entrydate + "\t"
 							+ entry.getLink());
@@ -216,10 +212,7 @@ public class RSSReader {
 			 * the specified date and time. we also include error handling since
 			 * apparently not all articles have a date.
 			 */
-			if (!isNewest
-					&& (post.getPublishedDate() != null ? post
-							.getPublishedDate().after(since) : true)
-					|| (isNewest && post.getPublishedDate().after(lastRun))) {
+			if (isPrintable(isNewest, post, since)) {
 				String date = post.getPublishedDate() != null ? post
 						.getPublishedDate().toString() : "Date unknown";
 				String feedOutput = "(" + articleNum + ")" + post.getTitle()
@@ -267,10 +260,7 @@ public class RSSReader {
 				 * articles after the specified date and time. we also include
 				 * error handling since apparently not all articles have a date.
 				 */
-				if (!isNewest
-						&& (post.getPublishedDate() != null ? post
-								.getPublishedDate().after(since) : true)
-						|| (isNewest && post.getPublishedDate().after(lastRun))) {
+				if (isPrintable(isNewest, post, since)) {
 					Matcher matcher = title.matcher(post.getTitle());
 					if (matcher.find()) {
 						String date = post.getPublishedDate() != null ? post
@@ -308,11 +298,7 @@ public class RSSReader {
 					 * also include error handling since apparently not all
 					 * articles have a date.
 					 */
-					if (!isNewest
-							&& (entry.getPublishedDate() != null ? entry
-									.getPublishedDate().after(since) : true)
-							|| (isNewest && entry.getPublishedDate().after(
-									lastRun))) {
+					if (isPrintable(isNewest, entry, since)) {
 						Matcher matcher = title.matcher(entry.getTitle());
 						if (matcher.find()) {
 							String date = entry.getPublishedDate() != null ? entry
@@ -524,6 +510,14 @@ public class RSSReader {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public boolean isPrintable(boolean isNewest, SyndEntryImpl entry, Date since) {
+		return !isNewest
+		&& (entry.getPublishedDate() != null ? entry
+				.getPublishedDate().after(since) : true)
+		|| (isNewest && entry.getPublishedDate().after(
+				lastRun));
 	}
 
 	/**
