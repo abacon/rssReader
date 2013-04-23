@@ -1,0 +1,23 @@
+\documentclass{article}
+\usepackage{homework}
+\usepackage{amsmath}
+\begin{document}
+
+\homework{1}{RSS Reflection}{Holly French, Andrew Bacon, Veronica Lynn}{Foo}
+
+During our code review, there were three things we discussed, mostly pertaining to the notion of code readability, especially depending on who our audience is.  
+
+\begin{enumerate}
+\item Long, convoluted conditionals: we had a number of long convoluted conditionals that ended up dealing with a lot of edge cases regarding date and time in our RSS parser.  These conditionals helped us determine when to print, but ultimately, they checked a lot of edge cases.  The conditionals were more than one long line long, so they ended up looking like brute-force solutions to our problem.  Instead, we decided to move the conditionals to another function called \emph{isPrintable} and try to clean them up there.
+\item Use of the ternary operator: In our code review, we discussed how readable the ternary operator was....................................
+\item Useless comments that described code that was already more-or-less self-documenting..................
+
+\end{enumerate}
+
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
