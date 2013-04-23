@@ -415,13 +415,11 @@ public class RSSReader {
 	 *            The arguments provided by the suer
 	 */
 	public void parseArguments(String[] args) {
-		// This is the object we'll be using
 		argParser = new ArgParser();
 
 		// Retrieve and process the command line arguments, setting the
-		// appropriate instance variables in test
+		// appropriate instance variables in ArgParser
 		CLManager options = new CLManager(argParser);
-		options.parse(args);
 
 		try {
 			options.parse(args);
@@ -438,13 +436,11 @@ public class RSSReader {
 		String[] remaining = options.getRemainingArguments();
 
 		// Get the filename out of the remaining options
+		// Note: we make an assumption here that the first "extraneous"
+		// argument is the feed file.
 		if (remaining.length > 0) {
-			// Note: we make an assumption here that the first "extraneous"
-			// argument is the feed file.
 			argParser.setFilename(remaining[0]);
 		} else {
-			// the program should exit if the feed file is not specified on the
-			// command line.
 			System.err.println("Error: no input filename specified.");
 			System.exit(-1);
 		}
@@ -536,10 +532,9 @@ public class RSSReader {
 	 */
 	public static void main(String[] args) {
 		RSSReader reader = new RSSReader();
-		String urlFile = null;
 
 		reader.parseArguments(args);
-		urlFile = reader.getArgParser().getFilename();
+		String urlFile = reader.getArgParser().getFilename();
 		ArrayList<SyndFeedImpl> feeds = reader.getSyndFeedsFromFile(urlFile);
 		reader.setFeeds(feeds);
 
