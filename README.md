@@ -18,12 +18,14 @@ __Options:__
   --title=REGEX     Limits posts to those matching the specified regex.  
 
 __Design:__  
-    The program is comprised of three classes:  
-    RSSReader - The main class, which handles parsing the feeds, sorting the posts, and displaying the output  
+    The program is comprised of four classes:  
+    RSSReader - The main class, which handles parsing the feeds and sorting the posts 
     FileParser - Used by RSSReader to parse the input file containing urls of rss feeds  
     ArgParser - Used by RSSReader to parse the command line arguments  
+    FeedDisplayer - Used by RSSReader to output the feeds/posts to terminal
     Refer to the documentation for more info.  
 
 __Known Issues:__  
     - Crashes if a feed or post doesn't have a title  
-    - Crashes if a non-integer is entered for the --number option  
+    - --number doesn't work correctly with --by-date (for example, if number is 2,
+    displays 2 posts total rather than 2 per feed)
