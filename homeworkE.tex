@@ -15,6 +15,15 @@ During our code review, there were three things we discussed, mostly pertaining 
 \end{enumerate}
 
 
+We also made a number of fixes that we did not discuss in the Code Review, but we thought that they would be useful to a better user experience, and they would help improve the program with more robust error handling.  
+
+\begin{enumerate}
+\item Better, concise user feedback: We ran into this difficulty a few times: various feeds and entries would be missing specific attributes.  For example, three of the feeds we tested did not have dates.  We discussed how to present dateless feeds to the user, but we ended up ignoring date if there was none provided.
+\item More robust error handling: What happens if the user types in command line arguments that are not valid?  We decided to try to add in some error handling so that the program would not totally crash when there weren't valid command line arguments.  
+\item More beautiful output: We got rid of those ugly html tags!
+\end{enumerate}
+
+
 \end{document}
 
 %%% Local Variables: 
