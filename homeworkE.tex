@@ -9,8 +9,8 @@ During our code review, there were three things we discussed, mostly pertaining 
 
 \begin{enumerate}
 \item Long, convoluted conditionals: we had a number of long convoluted conditionals that ended up dealing with a lot of edge cases regarding date and time in our RSS parser.  These conditionals helped us determine when to print, but ultimately, they checked a lot of edge cases.  The conditionals were more than one long line long, so they ended up looking like brute-force solutions to our problem.  Instead, we decided to move the conditionals to another function called \emph{isPrintable} and try to clean them up there.
-\item Use of the ternary operator: In our code review, we discussed how readable the ternary operator was....................................
-\item Useless comments that described code that was already more-or-less self-documenting..................
+\item Use of the ternary operator: In our code review, we discussed how readable the ternary operator was.  One thing we talked about was our audience and the role they play in reading our code and influencing our decisions to use certain Java features.  The ternary isn't inherently readable, but it is much shorter and succinct, yet expressive.  Ultimately we decided to keep it: we used it primarily in error handling (return null if the date can't be found).  
+\item Useless comments that described code that was already more-or-less self-documenting.  When we were writing Java functions to write to and read from a file, it was useful to have comments (especially since some of us weren't as familiar with a lot of these Java Objects to interact with files).  However, once the code was completed, the comments were basically redundant, beacuse our function and variable names basically expressed what the code was doing.
 
 \end{enumerate}
 
