@@ -41,7 +41,7 @@ public class RSSReader {
 	private static final String LAST_RUN_FILE = "data/lastRun.txt";
 	private static final String TERMINAL_BLACK = "\033[0m";
 	private static final String TERMINAL_BLUE = "\033[34m";
-	private static final String TERMINAL_BOLD = "\033[1;30m";
+	private static final String TERMINAL_BOLD = "\033[1m";
 	private static final String TERMINAL_GRAY = "\033[0;37m";
 
 	public RSSReader() {
