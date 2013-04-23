@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,7 +47,7 @@ public class RSSReader {
 	private static final String TERMINAL_GRAY = "\033[0;37m";
 
 	public RSSReader() {
-		this.lastRun = getLastRun();
+		lastRun = getLastRun();
 	}
 
 	public void setArgParser(ArgParser argParser) {
@@ -53,7 +55,7 @@ public class RSSReader {
 	}
 
 	public ArgParser getArgParser() {
-		return this.argParser;
+		return argParser;
 	}
 
 	public void setFeeds(ArrayList<SyndFeedImpl> feeds) {
@@ -61,7 +63,7 @@ public class RSSReader {
 	}
 
 	public ArrayList<SyndFeedImpl> getFeeds() {
-		return this.feeds;
+		return feeds;
 	}
 
 	/**
@@ -71,33 +73,30 @@ public class RSSReader {
 	 * @return date at which the feed reader was last run
 	 */
 	public Date getLastRun() {
-		BufferedReader br = null;
-		try {
-			String sCurrentLine;
 
-			br = new BufferedReader(new FileReader(LAST_RUN_FILE));
-
-			while ((sCurrentLine = br.readLine()) != null) {
-				String date = sCurrentLine;
+			Scanner file;
+			try {
+				file = new Scanner(new File(LAST_RUN_FILE));
+			} catch (FileNotFoundException e1) {
+				System.out.println("Warning: Last run file does not exist.");
+				return new Date(0);
+			}
+			if (file.hasNextLine()) {
+				String date = file.nextLine();
+				file.close();
+				
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				
 				try {
 					return df.parse(date);
 				} catch (ParseException e) {
 					return new Date(0);
 				}
-			}
-
-		} catch (IOException e) {
-			return new Date(0);
-		} finally {
-			try {
-				if (br != null)
-					br.close();
-			} catch (IOException ex) {
+			} else {
+				file.close();
 				return new Date(0);
 			}
-		}
-		return new Date(0);
+			
 	}
 
 	public void setLastRun(Date lastRun) {
