@@ -1,8 +1,6 @@
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -13,12 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import be.ugent.twijug.jclops.CLManager;
 import be.ugent.twijug.jclops.CLParseException;
 
@@ -41,10 +35,6 @@ public class RSSReader {
 	private ArgParser argParser;
 	private Date lastRun;
 	private static final String LAST_RUN_FILE = "data/lastRun.txt";
-	private static final String TERMINAL_BLACK = "\033[0m";
-	private static final String TERMINAL_BLUE = "\033[34m";
-	private static final String TERMINAL_BOLD = "\033[1m";
-	private static final String TERMINAL_GRAY = "\033[0;37m";
 
 	public RSSReader() {
 		lastRun = getLastRun();
@@ -104,227 +94,34 @@ public class RSSReader {
 	}
 
 	/**
-	 * Does formatting and output and should respond to the following config
-	 * options: --number (number of posts) --since (since a date in format
-	 * yyyy-mm-dd, which is a date object) --title --description --newest
-	 * (optional)
+	 * Displays the feeds/posts depending on user specified input:
+	 * --by-date displays the posts from newest to oldest
+	 * --by-alpha displays feeds in alphabetical order
+	 * If neither of those flags are active, defaults to displaying
+	 * feeds in order given in URL file
 	 */
 	public void display() {
-		argParser = this.getArgParser();
-		int number = argParser.getNumber();
-		Date since = argParser.getSince();
-		Pattern title = argParser.getTitle();
+		argParser = getArgParser();
 		boolean isByDate = argParser.isByDate();
 		boolean isByAlpha = argParser.isByAlpha();
-		boolean isNewest = argParser.isNewest();
-		boolean isDescription = argParser.isDescription();
+		
+		FeedDisplayer displayer = new FeedDisplayer(argParser, lastRun);
 
-		if (title != null) {
-			displayByTitle(number, since, isByAlpha, isByDate, isDescription,
-					title, isNewest);
+		if (isByAlpha) {
+			ArrayList<SyndFeedImpl> feeds = sortPostsByAlpha();
+			displayer.displayByFeeds(feeds);
 		} else if (isByDate) {
-			displayByDate(number, since, isDescription, isNewest);
+			ArrayList<SyndEntryImpl> posts = sortPostsByDate();
+			displayer.displayByDate(posts);
 		} else {
-			displayByFeeds(number, since, isByAlpha, isDescription, isNewest);
+			displayer.displayByFeeds(getFeeds());
 		}
 
 		writeTimeToFile();
-
 	}
 
-	/**
-	 * displayByFeeds is called by display, which is the default display setting
-	 * if no date or title arguments are provided.
-	 * 
-	 * @param number
-	 *            Number of articles to be displayed
-	 * @param since
-	 *            Earliest date from which an article can be displayed
-	 * @param isByAlpha
-	 *            Determines whether the display should be alphabetically by
-	 *            title
-	 * @param isDescription
-	 *            Determines whether to print the articles description too
-	 */
-	public void displayByFeeds(int number, Date since, boolean isByAlpha,
-			boolean isDescription, boolean isNewest) {
-		ArrayList<SyndFeedImpl> curFeeds;
-		if (isByAlpha)
-			curFeeds = sortPostsByAlpha();
-		else
-			curFeeds = this.getFeeds();
+	
 
-		for (SyndFeedImpl feed : curFeeds) {
-			System.out.println(TERMINAL_BLUE + feed.getTitle().toUpperCase() + TERMINAL_BLACK);
-			int articleNum = 1;
-			for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
-				SyndEntryImpl entry = (SyndEntryImpl) i.next();
-				String entrydate;
-				if (entry.getPublishedDate() != null)
-					entrydate = entry.getPublishedDate().toString();
-				else
-					entrydate = "";
-
-				/*
-				 * we only print if the date is correct: if we want the newest,
-				 * we only print the articles that happened after it was last
-				 * run if we are imposing the since condition, we only print
-				 * articles after the specified date and time. we also include
-				 * error handling since apparently not all articles have a date.
-				 */
-				if (isPrintable(isNewest, entry, since)) {
-					System.out.println("(" + articleNum + ")"
-							+ TERMINAL_BOLD + entry.getTitle() + TERMINAL_BLACK + "\t" + entrydate + "\t" + 
-							TERMINAL_GRAY + entry.getLink() + TERMINAL_BLACK
-							);
-					if (isDescription && entry.getDescription() != null) {
-						System.out.println(entry.getDescription().getValue());
-					}
-					articleNum++;
-					if (articleNum > number)
-						break;
-				}
-
-			}
-			System.out.println();
-		}
-	}
-
-	/**
-	 * displayByFeeds is called by display, which displays articles by date
-	 * rather than by news source.
-	 * 
-	 * @param number
-	 *            Number of articles to be displayed
-	 * @param since
-	 *            Earliest date from which an article can be displayed
-	 * @param isDescription
-	 *            Determines whether a description is included with the article
-	 */
-	public void displayByDate(int number, Date since, boolean isDescription,
-			boolean isNewest) {
-		ArrayList<SyndEntryImpl> posts;
-		posts = sortPostsByDate();
-
-		int articleNum = 1;
-		for (int i = 0; i < number; i++) {
-			SyndEntryImpl post = posts.get(i);
-			/*
-			 * we only print if the date is correct: if we want the newest, we
-			 * only print the articles that happened after it was last run if we
-			 * are imposing the since condition, we only print articles after
-			 * the specified date and time. we also include error handling since
-			 * apparently not all articles have a date.
-			 */
-			if (isPrintable(isNewest, post, since)) {
-				String date = post.getPublishedDate() != null ? post
-						.getPublishedDate().toString() : "";
-						String feedOutput = "(" + articleNum + ")" + TERMINAL_BOLD + post.getTitle() + TERMINAL_BLACK
-								+ "\t" + date + "\t" + TERMINAL_GRAY + post.getLink() + TERMINAL_BLACK;
-						System.out.println(feedOutput);
-						if (isDescription && post.getDescription() != null) {
-							System.out.println(post.getDescription().getValue());
-						}
-						articleNum++;
-			}
-		}
-	}
-
-	/**
-	 * displayByTitle displays articles that match a given regular expression
-	 * for a title
-	 * 
-	 * @param number
-	 *            Number of posts
-	 * @param since
-	 *            Earliest date from which an article can be displayed
-	 * @param isByAlpha
-	 *            Determines whether we sort the titles alphabetically
-	 * @param isDescription
-	 *            Determines whether we show the article description
-	 * @param title
-	 *            The pattern we are using to match article titles
-	 */
-	public void displayByTitle(int number, Date since, boolean isByAlpha,
-			boolean isByDate, boolean isDescription, Pattern title,
-			boolean isNewest) {
-
-		// if we want to display by title and by date
-		if (isByDate) {
-			ArrayList<SyndEntryImpl> posts;
-			posts = sortPostsByDate();
-
-			int articleNum = 1;
-			for (int i = 0; i < number; i++) {
-				SyndEntryImpl post = posts.get(i);
-				/*
-				 * we only print if the date is correct: if we want the newest,
-				 * we only print the articles that happened after it was last
-				 * run if we are imposing the since condition, we only print
-				 * articles after the specified date and time. we also include
-				 * error handling since apparently not all articles have a date.
-				 */
-				if (isPrintable(isNewest, post, since)) {
-					Matcher matcher = title.matcher(post.getTitle());
-					if (matcher.find()) {
-						String date = post.getPublishedDate() != null ? post
-								.getPublishedDate().toString() : "";
-								String feedOutput = "(" + articleNum + ")"
-										+ TERMINAL_BOLD + post.getTitle() + TERMINAL_BLACK + "\t" + date + "\t"
-										+ TERMINAL_GRAY + post.getLink() + TERMINAL_BLACK;
-								System.out.println(feedOutput);
-								if (isDescription && post.getDescription() != null) {
-									System.out
-									.println(post.getDescription().getValue());
-								}
-								articleNum++;
-					}
-				}
-			}
-		}
-
-		// if we do not care about date
-		else {
-			ArrayList<SyndFeedImpl> curFeeds;
-			if (isByAlpha)
-				curFeeds = sortPostsByAlpha();
-			else
-				curFeeds = feeds;
-
-			int articleNum = 1;
-			for (SyndFeedImpl feed : curFeeds) {
-				for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
-					SyndEntryImpl entry = (SyndEntryImpl) i.next();
-					/*
-					 * we only print if the date is correct: if we want the
-					 * newest, we only print the articles that happened after it
-					 * was last run if we are imposing the since condition, we
-					 * only print articles after the specified date and time. we
-					 * also include error handling since apparently not all
-					 * articles have a date.
-					 */
-					if (isPrintable(isNewest, entry, since)) {
-						Matcher matcher = title.matcher(entry.getTitle());
-						if (matcher.find()) {
-							String date = entry.getPublishedDate() != null ? entry
-									.getPublishedDate().toString() : "";
-									System.out.println("(" + articleNum + ")"
-											+ TERMINAL_BOLD + entry.getTitle() + TERMINAL_BLACK + "\t" + date + "\t"
-											+ TERMINAL_GRAY + entry.getLink() + TERMINAL_BLACK);
-									if (isDescription && entry.getDescription() != null) {
-										System.out.println(entry.getDescription()
-												.getValue());
-									}
-									articleNum++;
-									if (articleNum > number)
-										break;
-						}
-					}
-				}
-			}
-		}
-
-	}
 
 	/**
 	 * Gets the posts from the feed.
@@ -354,8 +151,8 @@ public class RSSReader {
 	}
 
 	/**
-	 * This is called by the sortPosts method. It sorts posts when the mode is
-	 * alpha; that is, the user wants feeds sorted alphabetically
+	 * This sorts posts when the mode is alpha; that is, when
+	 *  the user wants feeds sorted alphabetically
 	 * 
 	 * @return posts The posts sorted alphabetically
 	 */
@@ -366,7 +163,7 @@ public class RSSReader {
 			public int compare(SyndFeedImpl o1, SyndFeedImpl o2) {
 				String a = o1.getTitle();
 				String b = o2.getTitle();
-				return a.compareTo(b);
+				return a.compareToIgnoreCase(b);
 			}
 		});
 		return sortedFeeds;
@@ -503,11 +300,13 @@ public class RSSReader {
 		try {
 
 			file = new File(LAST_RUN_FILE);
-			fop = new FileOutputStream(file);
 
 			if (!file.exists()) {
 				file.createNewFile();
 			}
+			
+			fop = new FileOutputStream(file);
+
 
 			byte[] contentInBytes = content.getBytes();
 
