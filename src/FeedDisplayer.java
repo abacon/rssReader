@@ -4,8 +4,13 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
+
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
+
+
+
 
 /**
  * A class for handling the RSSReader's output to terminal
@@ -101,7 +106,7 @@ public class FeedDisplayer {
 				TERMINAL_GRAY + entry.getLink() + TERMINAL_BLACK
 				);
 		if (argParser.isDescription() && entry.getDescription() != null) {
-			System.out.println(entry.getDescription().getValue());
+			System.out.println(this.stripHTML(entry.getDescription().getValue()));
 		}
 	}
 	
@@ -137,4 +142,9 @@ public class FeedDisplayer {
 		}
 		return true;
 	}
+	
+	public String stripHTML(String html) {
+	    return Jsoup.parse(html).text();
+	}
+	
 }
