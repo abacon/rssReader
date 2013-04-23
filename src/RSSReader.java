@@ -446,6 +446,11 @@ public class RSSReader {
 		this.setArgParser(argParser);
 	}
 
+	/**
+	 * Given the path to the URL file, parse URLS into feeds
+	 * @param filename URL file path
+	 * @return list of feeds
+	 */
 	public ArrayList<SyndFeedImpl> getSyndFeedsFromFile(String filename) {
 		FileParser fp = new FileParser();
 		ArrayList<String> urls = fp.getLines(filename);
@@ -467,6 +472,15 @@ public class RSSReader {
 		return feeds;
 	}
 
+	/**
+	 * Given a URL, parse the associated feed
+	 * 
+	 * @param url The URL to parse
+	 * @return the parsed feed
+	 * @throws IllegalArgumentException
+	 * @throws FeedException
+	 * @throws IOException
+	 */
 	public SyndFeedImpl makeSyndFeedImplFromUrl(String url)
 			throws IllegalArgumentException, FeedException, IOException {
 		URL feedSource = new URL(url);
@@ -514,10 +528,17 @@ public class RSSReader {
 		}
 	}
 
+	/**
+	 * Determines whether a given entry should be printed or not
+	 * @param isNewest 
+	 * @param entry
+	 * @param since
+	 * @return true if entry should be printed, else false
+	 */
 	public boolean isPrintable(boolean isNewest, SyndEntryImpl entry, Date since) {
-		return !isNewest
+		return (!isNewest
 				&& ((entry.getPublishedDate() != null ? entry
-						.getPublishedDate().after(since) : true) || (isNewest && entry
+						.getPublishedDate().after(since) : true)) || (isNewest && entry
 								.getPublishedDate().after(lastRun)));
 	}
 
