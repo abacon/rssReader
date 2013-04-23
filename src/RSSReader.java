@@ -215,13 +215,13 @@ public class RSSReader {
 			if (isPrintable(isNewest, post, since)) {
 				String date = post.getPublishedDate() != null ? post
 						.getPublishedDate().toString() : "";
-				String feedOutput = "(" + articleNum + ")" + post.getTitle()
-						+ "\t" + date + "\t" + post.getLink();
-				System.out.println(feedOutput);
-				if (isDescription && post.getDescription() != null) {
-					System.out.println(post.getDescription().getValue());
-				}
-				articleNum++;
+						String feedOutput = "(" + articleNum + ")" + post.getTitle()
+								+ "\t" + date + "\t" + post.getLink();
+						System.out.println(feedOutput);
+						if (isDescription && post.getDescription() != null) {
+							System.out.println(post.getDescription().getValue());
+						}
+						articleNum++;
 			}
 		}
 	}
@@ -265,14 +265,15 @@ public class RSSReader {
 					if (matcher.find()) {
 						String date = post.getPublishedDate() != null ? post
 								.getPublishedDate().toString() : "";
-						String feedOutput = "(" + articleNum + ")"
-								+ post.getTitle() + "\t" + date + "\t"
-								+ post.getLink();
-						System.out.println(feedOutput);
-						if (isDescription && post.getDescription() != null) {
-							System.out.println(post.getDescription().getValue());
-						}
-						articleNum++;
+								String feedOutput = "(" + articleNum + ")"
+										+ post.getTitle() + "\t" + date + "\t"
+										+ post.getLink();
+								System.out.println(feedOutput);
+								if (isDescription && post.getDescription() != null) {
+									System.out
+									.println(post.getDescription().getValue());
+								}
+								articleNum++;
 					}
 				}
 			}
@@ -302,17 +303,17 @@ public class RSSReader {
 						Matcher matcher = title.matcher(entry.getTitle());
 						if (matcher.find()) {
 							String date = entry.getPublishedDate() != null ? entry
-									.getPublishedDate().toString()
-									: "";
-							System.out.println("(" + articleNum + ")"
-									+ entry.getTitle() + "\t" + date + "\t"
-									+ entry.getLink());
-							if (isDescription && entry.getDescription() != null) {
-								System.out.println(entry.getDescription().getValue());
-							}
-							articleNum++;
-							if (articleNum > number)
-								break;
+									.getPublishedDate().toString() : "";
+									System.out.println("(" + articleNum + ")"
+											+ entry.getTitle() + "\t" + date + "\t"
+											+ entry.getLink());
+									if (isDescription && entry.getDescription() != null) {
+										System.out.println(entry.getDescription()
+												.getValue());
+									}
+									articleNum++;
+									if (articleNum > number)
+										break;
 						}
 					}
 				}
@@ -323,12 +324,13 @@ public class RSSReader {
 
 	/**
 	 * Gets the posts from the feed.
+	 * 
 	 * @param curFeed
 	 *            the current feed from which we want to get posts
 	 * @return an array list of SyndEntry objects, which are the posts
 	 */
 	public List<SyndEntryImpl> getPostsFromFeed(SyndFeedImpl curFeed) {
-		return (List<SyndEntryImpl>) curFeed.getEntries();
+		return curFeed.getEntries();
 
 	}
 
@@ -420,9 +422,9 @@ public class RSSReader {
 			options.parse(args);
 		} catch (CLParseException ex) {
 			System.out.println(ex);
-		        System.out.println (options.getUsageMessage());
+			System.out.println(options.getUsageMessage());
 		}
-		
+
 		if (this.getArgParser().showHelp()) {
 			System.err.println(options.getUsageMessage());
 			System.exit(1);
@@ -453,7 +455,7 @@ public class RSSReader {
 				feeds.add(makeSyndFeedImplFromUrl(url));
 			} catch (MalformedURLException e) {
 				System.out
-						.println("Warning: " + url + " is not a valid URL.\n");
+				.println("Warning: " + url + " is not a valid URL.\n");
 			} catch (IOException e) {
 				System.out.println("Warning: URL " + url
 						+ " could not be read.\n");
@@ -483,7 +485,7 @@ public class RSSReader {
 		File file;
 		Date date = new Date();
 		String content = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-				.format(date);
+		.format(date);
 		try {
 
 			file = new File(LAST_RUN_FILE);
@@ -511,9 +513,12 @@ public class RSSReader {
 			}
 		}
 	}
-	
+
 	public boolean isPrintable(boolean isNewest, SyndEntryImpl entry, Date since) {
-		return !isNewest && ((entry.getPublishedDate() != null ? entry.getPublishedDate().after(since) : true) || (isNewest && entry.getPublishedDate().after(lastRun)));
+		return !isNewest
+				&& ((entry.getPublishedDate() != null ? entry
+						.getPublishedDate().after(since) : true) || (isNewest && entry
+								.getPublishedDate().after(lastRun)));
 	}
 
 	/**
