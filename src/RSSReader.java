@@ -152,7 +152,7 @@ public class RSSReader {
 			curFeeds = this.getFeeds();
 
 		for (SyndFeedImpl feed : curFeeds) {
-			System.out.println(feed.getTitle().toUpperCase());
+			System.out.println("\033[34m" + feed.getTitle().toUpperCase() + "\033[0m");
 			int articleNum = 1;
 			for (Iterator i = feed.getEntries().iterator(); i.hasNext();) {
 				SyndEntryImpl entry = (SyndEntryImpl) i.next();
@@ -171,8 +171,9 @@ public class RSSReader {
 				 */
 				if (isPrintable(isNewest, entry, since)) {
 					System.out.println("(" + articleNum + ")"
-							+ entry.getTitle() + "\t" + entrydate + "\t"
-							+ entry.getLink());
+							+ "\033[1;30m" + entry.getTitle() + "\033[0m" + "\t" + entrydate + "\t" + 
+							"\033[0;37m" + entry.getLink() + "\033[0m"
+							);
 					if (isDescription && entry.getDescription() != null) {
 						System.out.println(entry.getDescription().getValue());
 					}
@@ -215,8 +216,8 @@ public class RSSReader {
 			if (isPrintable(isNewest, post, since)) {
 				String date = post.getPublishedDate() != null ? post
 						.getPublishedDate().toString() : "";
-						String feedOutput = "(" + articleNum + ")" + post.getTitle()
-								+ "\t" + date + "\t" + post.getLink();
+						String feedOutput = "(" + articleNum + ")" + "\033[1;30m" + post.getTitle() + "\033[0m"
+								+ "\t" + date + "\t" + "\033[0;37m" + post.getLink() + "\033[0m";
 						System.out.println(feedOutput);
 						if (isDescription && post.getDescription() != null) {
 							System.out.println(post.getDescription().getValue());
@@ -266,8 +267,8 @@ public class RSSReader {
 						String date = post.getPublishedDate() != null ? post
 								.getPublishedDate().toString() : "";
 								String feedOutput = "(" + articleNum + ")"
-										+ post.getTitle() + "\t" + date + "\t"
-										+ post.getLink();
+										+ "\033[1;30m" + post.getTitle() + "\033[0m" + "\t" + date + "\t"
+										+ "\033[0;37m" + post.getLink() + "\033[0m";
 								System.out.println(feedOutput);
 								if (isDescription && post.getDescription() != null) {
 									System.out
@@ -305,8 +306,8 @@ public class RSSReader {
 							String date = entry.getPublishedDate() != null ? entry
 									.getPublishedDate().toString() : "";
 									System.out.println("(" + articleNum + ")"
-											+ entry.getTitle() + "\t" + date + "\t"
-											+ entry.getLink());
+											+ "\033[1;30m" + entry.getTitle() + "\033[0m" + "\t" + date + "\t"
+											+ "\033[0;37m" + entry.getLink() + "\033[0m");
 									if (isDescription && entry.getDescription() != null) {
 										System.out.println(entry.getDescription()
 												.getValue());
