@@ -45,6 +45,10 @@ public class ArgParser {
 
 	/** Whether or not to display a usage message */
 	private boolean showHelp;
+	
+	private boolean update;
+	
+	private boolean chime;
 
 	/**
 	 * The constructor sets default values for the instance variables, in case these are
@@ -59,6 +63,8 @@ public class ArgParser {
 		since = new Date(0);
 		title = null;
 		filename = null;
+		chime = false;
+		update = false;
 	}
 
 	/**
@@ -219,5 +225,28 @@ public class ArgParser {
 	public boolean showHelp() {
 		return this.showHelp;
 	}
+
+	public boolean getUpdate() {
+		return this.update;
+	}
+	
+	@Option(shortName = 'u', 
+			description = "Periodically check for new posts and print them when they appear." 
+	)
+	public void setUpdate() {
+		this.update = true;
+	}
+	
+	public boolean getChime() {
+		return this.chime;
+	}
+	
+	@Option(shortName = 'c', 
+			description = "Sound a chime when new posts are found." 
+	)
+	public void setChime() {
+		this.chime = true;
+	}
+	
 
 }

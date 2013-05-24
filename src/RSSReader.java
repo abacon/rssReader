@@ -358,6 +358,21 @@ public class RSSReader {
 		reader.setFeeds(feeds);
 
 		reader.display();
+		FeedWatcher feedWatcher = new FeedWatcher(feeds);
+		feedWatcher.start();
+		if (reader.getArgParser().getChime()) {
+			FeedObserver alertNoiseObserver = new AlertNoiseObserver();
+			feedWatcher.addObserver(alertNoiseObserver);
+		}
+		if (reader.getArgParser().getUpdate()) {
+			FeedObserver titleAndDescObserver = new TitleAndDescObserver();
+			feedWatcher.addObserver(titleAndDescObserver);
+		}
+		try {
+			feedWatcher.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
