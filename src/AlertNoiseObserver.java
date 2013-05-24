@@ -12,6 +12,12 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
 
 
+/**
+ * AlertNoiseObserver plays a familiar alert when new posts are detected.
+ * Use it by adding it to a FeedWatcher instance.
+ * 
+ * @see FeedWatcher#addObserver(FeedObserver)
+ */
 public class AlertNoiseObserver extends FeedObserver {
 
 	/**
