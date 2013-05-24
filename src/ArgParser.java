@@ -226,10 +226,19 @@ public class ArgParser {
 		return this.showHelp;
 	}
 
+    /**
+    * Gets whether or not to run the TitleAndDescObserver
+    * TitleAndDescObserver posts the title and description of 
+    * any new posts
+    */
 	public boolean getUpdate() {
 		return this.update;
 	}
 	
+	
+	/**
+	* Sets whether or not to run the TitleAndDescObserver
+	*/
 	@Option(shortName = 'u', 
 			description = "Periodically check for new posts and print them when they appear." 
 	)
@@ -237,10 +246,17 @@ public class ArgParser {
 		this.update = true;
 	}
 	
+	/**
+	* Gets whether or not to run the AlertNoiseObserver, which 
+	* plays a sound whenever new posts are published
+	*/
 	public boolean getChime() {
 		return this.chime;
 	}
 	
+	/**
+	* Sets whether or not to run the AlertNoiseObserver
+	*/
 	@Option(shortName = 'c', 
 			description = "Sound a chime when new posts are found." 
 	)
