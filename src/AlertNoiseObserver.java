@@ -27,6 +27,7 @@ public class AlertNoiseObserver extends FeedObserver {
 			AudioInputStream ais;
 			ais = AudioSystem.getAudioInputStream( alertFile );
 			clip.open(ais);
+			clip.start();
 		} catch (UnsupportedAudioFileException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
