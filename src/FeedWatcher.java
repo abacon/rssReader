@@ -9,8 +9,22 @@ import com.sun.syndication.feed.synd.SyndFeedImpl;
 
 
 /**
- * @author abacon
- *
+ * <code>FeedWatcher</code> takes an <code>ArrayList&lt;SyndFeedImpl&gt;</code> and periodically checks for 
+ * posts which have a publish date since the last time it checked. It then
+ * notifies all observers.
+ * 
+ * Simple usage: 
+ * <pre>
+ * FeedWatcher feedWatcher = new FeedWatcher(feeds);
+ * feedWatcher.start();
+ * FeedObserver alertNoiseObserver = new AlertNoiseObserver();
+ * feedWatcher.addObserver(alertNoiseObserver);
+ * try {
+ *	feedWatcher.join();
+ * } catch (InterruptedException e) {
+ *	e.printStackTrace();
+ * }
+ * </pre>
  */
 public class FeedWatcher extends Thread {
 	
@@ -43,8 +57,6 @@ public class FeedWatcher extends Thread {
 	}
 	
 	
-	// TODO: This method needs access to the original feeds in order to make a comparison.
-	//       Alternatively, we pass in a current Date when the thread is created, which is then updated every run.
 	protected boolean feedHasChanged(SyndFeedImpl feed) {
 		
 		List<SyndEntryImpl> entries = feed.getEntries();
@@ -61,8 +73,7 @@ public class FeedWatcher extends Thread {
 	public void run() {
 		while(true) {
 			try {
-				//Thread.sleep(120000);
-				Thread.sleep(10000);
+				Thread.sleep(15000);
 			} catch (InterruptedException e) {
 				System.out.println("Something bad happened! Exiting. ");
 				e.printStackTrace();
