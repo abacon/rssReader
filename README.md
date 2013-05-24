@@ -10,7 +10,7 @@ It contains two observers: One which posts the title and description of any new 
 PLEASE TURN YOUR SOUND ON!
 
 __Usage:__  
-./rss_reader.sh [options] <urls.txt>  
+./rss_reader.sh [options] urls.txt  
 
 urls.txt must be a text file containing urls of rss feeds, one feed per
 line.  
@@ -24,7 +24,7 @@ Valid options are:
       --filename     The location of a file containing feed URLs, one per line.  
   -h, --help         Displays this message  
   -n, --newest       Show only those items which are new since your last use of RSSReader.  
-  -N, --number       <N> the number of posts per feed to display.  
-  -S, --since        <S> the date for which to display posts published on or after.  
-      --title        <S> the regex with which to match feed titles.  
+  -N, --number       N the number of posts per feed to display.  
+  -S, --since        S the date for which to display posts published on or after.  
+      --title        S the regex with which to match feed titles.  
   -u, --update       Periodically check for new posts and print them when they appear. NEW OBSERVER  
